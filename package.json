@@ -19,5 +19,8 @@
   "dependencies": {
     "@octokit/graphql": "^5.0.0",
     "@octokit/rest": "^19.0.3"
+  },
+  "devDependencies": {
+    "prettier": "2.7.1"
   }
 }
