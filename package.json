@@ -1,0 +1,19 @@
+{
+  "name": "emissary",
+  "version": "0.0.1",
+  "description": "A simple Github Action to comment on pull request discussions from commits messages",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Roms1383/emissary.git"
+  },
+  "author": "Romain Kelifa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Roms1383/emissary/issues"
+  },
+  "homepage": "https://github.com/Roms1383/emissary#readme"
+}
