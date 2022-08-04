@@ -4,7 +4,7 @@
   "description": "A simple Github Action to comment on pull request discussions from commits messages",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "GITHUB_TOKEN='00000' GITHUB_REPOSITORY='Roms1383/emissary' GITHUB_EVENT_PATH='./tests/fixtures/actionTrigger.json' jest"
   },
   "repository": {
     "type": "git",
