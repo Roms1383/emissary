@@ -1,0 +1,19 @@
+name: CI
+on: [push]
+
+jobs:
+  unit-tests:
+    name: Test GH action with unit testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: setup NodeJS
+        uses: dcodeIO/setup-node-nvm@master
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: run tests
+        run: npm test -- --ci
