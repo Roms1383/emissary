@@ -2,7 +2,7 @@
 
 A simple Github Action to comment on pull request discussions from commits messages
 
-hello !!!! from LittleKitty2832 :smile:
+hello !!!! from LittleKitty2832 :smile: :heart:
 
 ## infos
 
