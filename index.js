@@ -11,7 +11,7 @@ const analyze = async () => {
     const num = utils.issue(ref)
     if (num) {
         for (commit of commits) {
-            console.info(commit)
+            console.info(JSON.stringify(commit, null, 2))
             const found = utils.comment(commit.message)
             if (found) {
                 const comment = `${found} *from @${
