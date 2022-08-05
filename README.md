@@ -2,6 +2,8 @@
 
 A simple Github Action to comment on pull request discussions from commits messages
 
+hello !!!!
+
 ## infos
 
 ### example of a Github Action in JS
