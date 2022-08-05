@@ -1,3 +1,4 @@
+require('dotenv').config()
 const core = require('@actions/core')
 const utils = require('./utils')
 
