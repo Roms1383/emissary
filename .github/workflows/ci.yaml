@@ -33,4 +33,4 @@ jobs:
       - name: run action
         run: npm start
         env:
-          EVENT: '${{ github.event }}'
+          EVENT: '${{ github.commits }}'
