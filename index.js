@@ -1,5 +1,4 @@
 require('dotenv').config()
-const core = require('@actions/core')
 const utils = require('./utils')
 
 const event = process.env.GITHUB_REPOSITORY
@@ -7,14 +6,13 @@ const owner = utils.owner(event)
 const repo = utils.repo(event)
 
 const analyze = async () => {
-    // const input = core.getInput('event', { required: false })
-    const environment = process.env.EVENT
-    console.info('input:')
-    console.info(environment)
-    // console.info(input)
-    // const { commits, ref } = await utils
-    //     .read(`./${process.env.GITHUB_EVENT_PATH}`)
-    //     .then(JSON.parse)
+    const { commits, ref } = await utils
+        .read(`./${process.env.GITHUB_EVENT_PATH}`)
+        .then(JSON.parse)
+    console.info('commits')
+    console.info(commits)
+    console.info('ref')
+    console.info(ref)
     // const num = utils.issue(ref)
     // if (num) {
     // for (commit of commits) {
