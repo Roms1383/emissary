@@ -7,7 +7,7 @@ const repo = utils.repo(event)
 
 const analyze = async () => {
     // const input = core.getInput('event', { required: false })
-    const input = process.env.INPUT_EVENT
+    const input = process.env.EVENT
     console.info(input)
     // const { commits, ref } = await utils
     //     .read(`./${process.env.GITHUB_EVENT_PATH}`)
