@@ -70,6 +70,8 @@ repository
 
 graph ql api [for discussions](https://docs.github.com/en/graphql/guides/using-the-graphql-api-for-discussions)
 
+especially [Queries](https://docs.github.com/en/graphql/reference/queries) and [Objects](https://docs.github.com/en/graphql/reference/objects)
+
 - addDiscussionComment
 - markDiscussionCommentAsAnswer
 - PullRequestReviewThread [v4] (isResolved, isOutdated, pullRequest)
