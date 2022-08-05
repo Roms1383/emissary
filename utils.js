@@ -1,4 +1,8 @@
 const fs = require('fs').promises
+const { Octokit } = require('@octokit/rest')
+const octokit = new Octokit({
+    auth: `token ${process.env.GITHUB_TOKEN}`,
+})
 
 const owner = (event) => event.slice(0, event.indexOf('/'))
 const repo = (event) => event.slice(event.indexOf('/') + 1, event.length)

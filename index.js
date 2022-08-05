@@ -1,7 +1,3 @@
-const Octokit = require('@octokit/rest')
-const octokit = new Octokit({
-    auth: `token ${process.env.GITHUB_TOKEN}`,
-})
 const utils = require('./utils')
 
 const event = process.env.GITHUB_REPOSITORY
@@ -21,6 +17,7 @@ const analyze = async () => {
                 const comment = `${found} *from @${
                     commit.author.username
                 } in [${commit.id.substring(0, 6)}](${commit.url})*`
+                console.warn('todo')
             }
         }
     }
