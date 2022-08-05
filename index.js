@@ -9,18 +9,18 @@ const owner = utils.owner(event)
 const repo = utils.repo(event)
 
 const analyze = async () => {
-    const data = utils
-        .read(`../${process.env.GITHUB_EVENT_PATH}`)
+    const { commits, ref } = await utils
+        .read(`./${process.env.GITHUB_EVENT_PATH}`)
         .then(JSON.parse)
-    const num = utils.issue(data.ref)
+    const num = utils.issue(ref)
     if (num) {
-        for (commit in data.commits) {
+        for (commit of commits) {
+            console.info(commit)
             const found = utils.comment(commit.message)
             if (found) {
                 const comment = `${found} *from @${
                     commit.author.username
                 } in [${commit.id.substring(0, 6)}](${commit.url})*`
-                helpers.reply(octokit, owner, repo, num, comment)
             }
         }
     }
