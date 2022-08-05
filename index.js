@@ -7,7 +7,7 @@ const repo = utils.repo(event)
 
 const analyze = async () => {
     const { commits, ref } = await utils
-        .read(`./${process.env.GITHUB_EVENT_PATH}`)
+        .read(`${process.env.GITHUB_EVENT_PATH}`)
         .then(JSON.parse)
     console.info('commits')
     console.info(commits)
