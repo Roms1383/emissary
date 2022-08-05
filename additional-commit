@@ -1,0 +1,20 @@
+[
+  {
+    author: {
+      email: 'pare.2832@gmail.com',
+      name: 'LittleKitty2832',
+      username: 'LittleKitty2832'
+    },
+    committer: {
+      email: 'pare.2832@gmail.com',
+      name: 'LittleKitty2832',
+      username: 'LittleKitty2832'
+    },
+    distinct: true,
+    id: '80375b5fd947e6c7a3a327e414044711259f9247',
+    message: ':tada: add another smiley to readme\n\n#resolve discussion_r938869706',
+    timestamp: '2022-08-05T21:29:01+07:00',
+    tree_id: '70dabc1b95804432b20079b0121f08c8c643bce0',
+    url: 'https://github.com/LittleKitty2832/emissary/commit/80375b5fd947e6c7a3a327e414044711259f9247'
+  }
+]
