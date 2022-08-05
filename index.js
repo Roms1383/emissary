@@ -6,6 +6,7 @@ const owner = utils.owner(event)
 const repo = utils.repo(event)
 
 
+
 const analyze = async () => {
     const { commits, ref } = await utils
         .read(`${process.env.GITHUB_EVENT_PATH}`)
