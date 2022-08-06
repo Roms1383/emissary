@@ -13,7 +13,8 @@ const analyze = async () => {
     console.info(ref)
     let belongs = false
     for (commit of commits) {
-        let pr = await utils.core.pr(commit.id)
+        console.info(`searching for pr related to ${commit.id}`)
+        let pr = await utils.core.pr(commit.id).catch(console.error)
         console.info('pr:')
         console.info(pr)
     }
