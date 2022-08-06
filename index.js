@@ -83,7 +83,13 @@ const analyze = async () => {
                                     //     reviews[0].id,
                                     //     `done in ${sha}`
                                     // )
-                                    await utils.core.reply(base, repo, num, thread.id, `done in ${sha}`)
+                                    await utils.core.reply(
+                                        base,
+                                        repo,
+                                        num,
+                                        searched,
+                                        `done in ${sha}`
+                                    )
                                 }
                                 console.warn('TODO: pagination')
                                 if (comment.next) {
