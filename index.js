@@ -70,7 +70,7 @@ const analyze = async () => {
                                 const searched = comment.url
                                     .split('#')[1]
                                     .substr('discussion_r'.length)
-                                if (searched == matches)
+                                if (searched === matches)
                                     info(
                                         'found!',
                                         `${comment.url} matches with ${matches}`
