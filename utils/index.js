@@ -7,7 +7,7 @@ const graphql = require('./graphql')
 const read = async (at) => fs.readFile(at, 'utf8')
 
 const matches = (ref) => {
-    let found = ref.match(/#resolve discussion_r([0-9]{9,}).*/im)
+    let found = ref.match(/#resolves? discussion_r([0-9]{9,}).*/im)
     return found ? found[1] : false
 }
 
