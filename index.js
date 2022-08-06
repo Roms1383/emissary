@@ -8,6 +8,7 @@ const box = (key, value) => {
         boxen(`${value}`, {
             padding: 1,
             title: `${key}`,
+            float: 'center',
             titleAlignment: 'center',
             textAlignment: 'center',
             borderStyle: 'round',
@@ -15,27 +16,17 @@ const box = (key, value) => {
     )
 }
 
-const line = (level, value, stringify) => {
+const info = (key, value, stringify) => {
     if (stringify) value = JSON.stringify(value, null, 2)
-    switch (level) {
-        case 'warn':
-            console.warn(value)
-            break
-        case 'info':
-            console.info(value)
-            break
-        default:
-            console.debug(value)
-            break
-    }
+    console.info(`${key}:\n${value}\n`)
 }
 
 const analyze = async () => {
     const { commits, ref } = await utils
         .read(`${process.env.GITHUB_EVENT_PATH}`)
         .then(JSON.parse)
-    box('ref', ref)
-    box('total commits', commits.length)
+    info('ref', ref)
+    info('commits', commits.map(({ id }) => id).join(', '))
     let commitsMatch = 0
     for (commit of commits) {
         const sha = commit.id
