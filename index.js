@@ -88,6 +88,7 @@ const analyze = async () => {
                                         )
                                         .then(console.info)
                                         .catch(console.error)
+                                    await utils.graphql.resolve(thread.id)
                                 }
                                 console.warn('TODO: pagination')
                                 if (comment.next) {

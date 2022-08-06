@@ -41,12 +41,27 @@ repository(owner: $owner, name: $repo) {
     variables: { repo },
 }
 
+const RESOLVE_PULL_REQUEST_THREAD = {
+    query: `
+mutation resolveThread($thread: ID!) {
+  resolveReviewThread(input: { threadId: $thread }) {
+    thread { id }
+  }
+}
+  `,
+    variables: {},
+}
+
 const pr = async (owner, pr) =>
     await octokit(PULL_REQUEST_THREAD.query, {
         ...PULL_REQUEST_THREAD.variables,
         pr,
         owner,
     }).then(map_pr)
+
+const resolve = async (thread) => {
+    await octokit(RESOLVE_PULL_REQUEST_THREAD.query, { thread })
+}
 
 const map_pr = (response) => {
     const {
@@ -117,4 +132,4 @@ const map_comment = (comment) => {
     }
 }
 
-module.exports = { pr }
+module.exports = { pr, resolve }
