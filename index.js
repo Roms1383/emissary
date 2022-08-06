@@ -26,7 +26,7 @@ const analyze = async () => {
     const eventPath = await utils
         .read(`${process.env.GITHUB_EVENT_PATH}`)
         .then(JSON.parse)
-    box('github.event', eventPath, true)
+    info('github.event', eventPath, true)
     const { commits, ref } = eventPath
     info('ref', ref)
     info('commits', commits.map(({ id }) => id).join(', '))
