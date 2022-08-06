@@ -56,7 +56,7 @@ const analyze = async () => {
                     box('resolved?', thread.resolved)
                     box('can reply?', thread.canReply)
                     box('can resolve?', thread.canResolve)
-                    box('path file thread', tread.path)
+                    box('path file thread', thread.path)
                     box('total', thread.total)
                     box('thread id', thread.id)
                     console.log('\n')
