@@ -39,6 +39,7 @@ const analyze = async () => {
             box('found pattern', matches)
             const { data: prs } = await utils.core.pr(sha).catch(console.error)
             let prFound = 0
+            info('prs', prs, true)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
                     prFound += 1
@@ -70,11 +71,12 @@ const analyze = async () => {
                                 const searched = comment.url
                                     .split('#')[1]
                                     .substr('discussion_r'.length)
-                                if (searched === matches)
+                                if (searched === matches) {
                                     info(
                                         'found!',
                                         `${comment.url} matches with ${matches}`
                                     )
+                                }
                                 console.warn('TODO: pagination')
                                 if (comment.next) {
                                     console.warn('there are more comments')
