@@ -73,6 +73,7 @@ const analyze = async () => {
                                         .substr('discussion_r'.length)
                                 )
                                     info(
+                                        'found!',
                                         `${comment.url} matches with ${matches}`
                                     )
                                 console.info(`\n`)
