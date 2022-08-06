@@ -88,7 +88,7 @@ const analyze = async () => {
                                         repo,
                                         num,
                                         searched,
-                                        `done in ${sha}`
+                                        `@${commit.author?.name} done in ${sha}`
                                     ).then(console.info).catch(console.error)
                                 }
                                 console.warn('TODO: pagination')
