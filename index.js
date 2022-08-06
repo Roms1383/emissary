@@ -3,14 +3,15 @@ const boxen = require('boxen')
 const utils = require('./utils')
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
-const box = (key, value) => {
+const box = (key, value, stringify) => {
+    if (stringify) value = JSON.stringify(value, null, 2)
     console.log(
         boxen(`${value}`, {
             padding: 1,
             title: `${key}`,
             float: 'center',
             titleAlignment: 'center',
-            textAlignment: 'center',
+            textAlignment: 'left',
             borderStyle: 'round',
         })
     )
@@ -22,9 +23,11 @@ const info = (key, value, stringify) => {
 }
 
 const analyze = async () => {
-    const { commits, ref } = await utils
+    const eventPath = await utils
         .read(`${process.env.GITHUB_EVENT_PATH}`)
         .then(JSON.parse)
+    box('github.event', eventPath, true)
+    const { commits, ref } = eventPath
     info('ref', ref)
     info('commits', commits.map(({ id }) => id).join(', '))
     let commitsMatch = 0
