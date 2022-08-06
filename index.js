@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { default: chalk } = require('chalk')
 const utils = require('./utils')
 
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
@@ -35,8 +36,8 @@ const analyze = async () => {
                         },
                     },
                 } = await utils.graphql.pr(base, num).catch(console.error)
-                console.info(`decision: ${decision}`)
-                console.info(`total: ${totalThreads}`)
+                console.info(chalk.bgCyan(`decision: ${decision}`))
+                console.info(chalk.bgCyan(`total: ${totalThreads}`))
                 for (thread of threads) {
                     const {
                         isResolved: resolved,
@@ -49,11 +50,11 @@ const analyze = async () => {
                             nodes: comments,
                         },
                     } = thread
-                    console.info(`resolved? ${resolved}`)
-                    console.info(`can reply? ${canReply}`)
-                    console.info(`can resolve? ${canResolve}`)
-                    console.info(`path: ${path}`)
-                    console.info(`total: ${totalComments}`)
+                    console.info(chalk.bgMagenta(`resolved? ${resolved}`))
+                    console.info(chalk.bgMagenta(`can reply? ${canReply}`))
+                    console.info(chalk.bgMagenta(`can resolve? ${canResolve}`))
+                    console.info(chalk.bgMagenta(`path: ${path}`))
+                    console.info(chalk.bgMagenta(`total: ${totalComments}`))
                     if (!resolved && canReply /* && canResolve */) {
                         console.warn('find root comment to reply to')
                         for (comment of comments) {
