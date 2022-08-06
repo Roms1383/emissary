@@ -15,6 +15,7 @@ repository(owner: $owner, name: $repo) {
       pageInfo { endCursor, hasNextPage },
       totalCount,
       nodes {
+        id,
         isResolved,
         viewerCanReply,
         viewerCanResolve,

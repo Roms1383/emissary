@@ -55,6 +55,7 @@ const analyze = async () => {
                     console.info(`can resolve? ${canResolve}`)
                     console.info(`path file thread: ${pathThread}`)
                     console.info(`total: ${totalComments}`)
+                    console.info(`thread id: ${thread.id}`)
                     console.info(`\n`)
                     if (!resolved && canReply /* && canResolve */) {
                         console.warn('find root comment to reply to')
