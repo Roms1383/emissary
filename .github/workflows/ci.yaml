@@ -12,14 +12,10 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
-      - name: read .nvmrc
-        id: nvmrc
-        run: echo "::set-output name=version::$(read -r line < .nvmrc)"
       - name: setup NodeJS
-        uses: dcodeIO/setup-node-nvm@master
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ steps.nvmrc.outputs.version }}
-
+          node-version-file: '.nvmrc'
       - name: install dependencies
         run: npm ci
 
@@ -33,13 +29,10 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
-      - name: read .nvmrc
-        id: nvmrc
-        run: echo "::set-output name=version::$(read -r line < .nvmrc)"
       - name: setup NodeJS
-        uses: dcodeIO/setup-node-nvm@master
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ steps.nvmrc.outputs.version }}
+          node-version-file: '.nvmrc'
 
       - name: install dependencies
         run: npm ci
