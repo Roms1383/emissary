@@ -35,7 +35,6 @@ const analyze = async () => {
                         },
                     },
                 } = await utils.graphql.pr(base, num).catch(console.error)
-                console.info(JSON.stringify(response, null, 2))
                 console.info(`decision: ${decision}`)
                 console.info(`total: ${total}`)
                 const count = threads.length()
