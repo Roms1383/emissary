@@ -11,14 +11,16 @@ const pr = async (commit_sha) =>
             commit_sha,
         }
     )
-const reply = (owner, repo, pull_number, comment_id, body) => {
-  await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies', {
-    owner,
-    repo,
-    pull_number,
-    comment_id,
-    body
-  })
-}
+const reply = async (owner, repo, pull_number, comment_id, body) =>
+    octokit.request(
+        'POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies',
+        {
+            owner,
+            repo,
+            pull_number,
+            comment_id,
+            body,
+        }
+    )
 
-module.exports = { pr,reply }
+module.exports = { pr, reply }
