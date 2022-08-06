@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { default: chalk } = require('chalk')
+const chalk = require('chalk')
 const utils = require('./utils')
 
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
