@@ -11,6 +11,8 @@ const PULL_REQUEST_THREAD = {
 query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
 repository(owner: $owner, name: $repo) {
   pullRequest(number: $pr) {
+    node_id,
+    reviewDecision,
     reviews(last: 3) {
       pageInfo { endCursor, hasNextPage },
       totalCount,
@@ -31,8 +33,7 @@ repository(owner: $owner, name: $repo) {
           nodes { author { login }, bodyText, state, path, id, url }
         }
       },
-    },
-    reviewDecision
+    }
   }
 }
 }
@@ -82,6 +83,7 @@ const map_pr = (response) => {
                     nodes: threads,
                 },
                 reviewDecision: decision,
+                node_id,
             },
         },
     } = response
@@ -92,6 +94,7 @@ const map_pr = (response) => {
         threads: threads.map(map_thread),
         decision,
         reviews,
+        node_id,
     }
 }
 
