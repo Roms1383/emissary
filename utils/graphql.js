@@ -14,7 +14,7 @@ repository(owner: $owner, name: $repo) {
     reviews(last: 3) {
       pageInfo { endCursor, hasNextPage },
       totalCount,
-      nodes { id }
+      nodes { id, body }
     }
     reviewThreads(last: 10) {
       pageInfo { endCursor, hasNextPage },
