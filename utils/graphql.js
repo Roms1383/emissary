@@ -83,7 +83,7 @@ const map_pr = (response) => {
                     nodes: threads,
                 },
                 reviewDecision: decision,
-                node_id,
+                id,
             },
         },
     } = response
@@ -94,7 +94,7 @@ const map_pr = (response) => {
         threads: threads.map(map_thread),
         decision,
         reviews,
-        node_id,
+        id,
     }
 }
 
