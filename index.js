@@ -58,9 +58,6 @@ const analyze = async () => {
                             console.info(`@${interlocutor} said:\n${message}`)
                         }
                     }
-                    console.info(
-                        `contributor @${contributor} committed with:\n${message}`
-                    )
                 }
                 console.warn('TODO: pagination')
                 if (next) {
