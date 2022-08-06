@@ -20,26 +20,41 @@ const analyze = async () => {
             if (pr.state == 'open' && !pr.locked) {
                 const num = pr.number
                 const base = pr.base.repo.owner.login
-                const response = await utils.graphql
-                    .pr(base, num)
-                    .catch(console.error)
+                const {
+                    repository: {
+                        pullRequest: {
+                            reviewThreads: {
+                                pageInfo: {
+                                    endCursor: cursor,
+                                    hasNextPage: next,
+                                },
+                                totalCount: total,
+                                nodes: threads,
+                            },
+                            reviewDecision: decision,
+                        },
+                    },
+                } = await utils.graphql.pr(base, num).catch(console.error)
                 console.info(JSON.stringify(response, null, 2))
+                console.info(`decision: ${decision}`)
+                console.info(`total: ${total}`)
+                const count = threads.length()
+                for (thread of threads) {
+                    const {
+                        author: { login: contributor },
+                        bodyText: message,
+                    } = thread
+                    console.info(
+                        `contributor @${contributor} committed with:\n${message}`
+                    )
+                }
+                console.warn('TODO: pagination')
+                if (next) {
+                    console.warn('there are more threads')
+                }
             }
         }
     }
-    // const num = utils.issue(ref)
-    // if (num) {
-    // for (commit of commits) {
-    //     console.info(JSON.stringify(commit, null, 2))
-    //     const found = utils.comment(commit.message)
-    //     if (found) {
-    //         const comment = `${found} *from @${
-    //             commit.author.username
-    //         } in [${commit.id.substring(0, 6)}](${commit.url})*`
-    //         console.warn('todo')
-    //     }
-    // }
-    // }
 }
 
 analyze()
