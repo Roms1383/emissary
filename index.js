@@ -60,7 +60,7 @@ const analyze = async () => {
                     box('path file thread', thread.path)
                     box('total comments', thread.total)
                     console.log('\n')
-                    if (!resolved && canReply /* && canResolve */) {
+                    if (!thread.resolved && thread.canReply /* && thread.canResolve */) {
                         console.warn('find root comment to reply to')
                         for (comment of comments) {
                             const interlocutor = comment.author?.login
