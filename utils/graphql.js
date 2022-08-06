@@ -14,12 +14,16 @@ repository(owner: $owner, name: $repo) {
     reviewThreads(last: 10) {
       pageInfo { endCursor, hasNextPage },
       totalCount,
-      nodes { isResolved, viewerCanReply, viewerCanResolve },
-      comments(last: 10) {
-        pageInfo { endCursor, hasNextPage },
-        totalCount,
-        nodes { author, bodyText }
-      }
+      nodes {
+        isResolved,
+        viewerCanReply,
+        viewerCanResolve,
+        comments(last: 10) {
+          pageInfo { endCursor, hasNextPage },
+          totalCount,
+          nodes { author, bodyText }
+        }
+      },
     },
     reviewDecision
   }
