@@ -4,30 +4,27 @@ const octokit = graphql.defaults({
         authorization: `token ${process.env.GITHUB_TOKEN}`,
     },
 })
-const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
-const ASSOCIATED_PR = {
+const PULL_REQUEST_THREAD = {
     query: `
-  query associatedPRs($repo: String!, $owner: String!, $ref: String!){
-    repository(name: $repo, owner: $owner) {
-      ref(qualifiedName: $ref) {
-        associatedPullRequests(first:5){
-          edges{
-            node{
-              title
-              number
-              body
-            }
-          }
-        }
-      }
-    }
+query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
+repository(owner: $owner, name: $repo) {
+  pullRequest(number: $pr) {
+    reviewThreads(last: 10) { pageInfo { endCursor, hasNextPage } },
+    reviewDecision
   }
+}
+}
 `,
     variables: { owner, repo },
 }
 
-const pr = async (sha, ref) =>
-    await octokit(ASSOCIATED_PR.query, { ...ASSOCIATED_PR.variables, sha, ref })
+const pr = async (owner, pr) =>
+    await octokit(PULL_REQUEST_THREAD.query, {
+        ...PULL_REQUEST_THREAD.variables,
+        pr,
+        owner,
+    })
 
 module.exports = { pr }

@@ -85,3 +85,7 @@ Can be one of: APPROVE, REQUEST_CHANGES, COMMENT
 ### samples
 
 e.g. from frb: <https://github.com/fzyzcjy/flutter_rust_bridge/pull/605#discussion_r935453437>
+
+### work in progress
+
+beware that commit SHA is from forked repository but review threads must be retrieved from main repository.
