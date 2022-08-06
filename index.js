@@ -53,12 +53,12 @@ const analyze = async () => {
                 box('total', total)
                 console.log('\n')
                 for (thread of threads) {
-                    box('resolved?', thread.resolved)
-                    box('can reply?', thread.canReply)
-                    box('can resolve?', thread.canResolve)
-                    box('path file thread', thread.path)
-                    box('total', thread.total)
                     box('thread id', thread.id)
+                    box('is thread resolved?', thread.resolved)
+                    box('can viewer reply to thread?', thread.canReply)
+                    box('can viewer resolve thread?', thread.canResolve)
+                    box('path file thread', thread.path)
+                    box('total comments', thread.total)
                     console.log('\n')
                     if (!resolved && canReply /* && canResolve */) {
                         console.warn('find root comment to reply to')
