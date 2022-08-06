@@ -78,11 +78,12 @@ const analyze = async () => {
                                         'found!',
                                         `${comment.url} matches with ${matches}`
                                     )
-                                    await utils.graphql.notify(
-                                        pr.node_id,
-                                        reviews[0].id,
-                                        `done in ${sha}`
-                                    )
+                                    // await utils.graphql.notify(
+                                    //     pr.node_id,
+                                    //     reviews[0].id,
+                                    //     `done in ${sha}`
+                                    // )
+                                    await utils.core.reply(base, repo, num, thread.id, `done in ${sha}`)
                                 }
                                 console.warn('TODO: pagination')
                                 if (comment.next) {
