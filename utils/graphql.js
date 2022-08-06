@@ -53,45 +53,53 @@ const pr = async (owner, pr) =>
         owner,
     }).then(map_pr)
 
-const map_pr = ({
-    pullRequest: {
-        reviewThreads: {
+const map_pr = (response) => {
+    const {
+        repository: {
+            pullRequest: {
+                reviewThreads: {
+                    pageInfo: { endCursor: cursor, hasNextPage: next },
+                    totalCount: total,
+                    nodes: threads,
+                },
+                reviewDecision: decision,
+            },
+        },
+    } = response
+    return {
+        cursor,
+        next,
+        total,
+        threads: threads.map(map_thread),
+        decision,
+    }
+}
+
+const map_thread = (thread) => {
+    const {
+        id,
+        isResolved: resolved,
+        viewerCanReply: canReply,
+        viewerCanResolve: canResolve,
+        path,
+        comments: {
             pageInfo: { endCursor: cursor, hasNextPage: next },
             totalCount: total,
-            nodes: threads,
+            nodes: comments,
         },
-        reviewDecision: decision,
-    },
-}) => ({
-    cursor,
-    next,
-    total,
-    threads: threads.map(map_thread),
-    decision,
-})
-
-const map_thread = ({
-    id,
-    isResolved: resolved,
-    viewerCanReply: canReply,
-    viewerCanResolve: canResolve,
-    path,
-    comments: {
-        pageInfo: { endCursor: cursor, hasNextPage: next },
-        totalCount: total,
-        nodes: comments,
-    },
-}) => ({
-    id,
-    resolved,
-    canReply,
-    canResolve,
-    path,
-    cursor,
-    next,
-    total,
-    comments,
-})
+    } = thread
+    return {
+        id,
+        resolved,
+        canReply,
+        canResolve,
+        path,
+        cursor,
+        next,
+        total,
+        comments,
+    }
+}
 
 const notify = async () =>
     await octokit(NOTIFY_THREAD.query, {
