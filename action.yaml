@@ -3,3 +3,8 @@ description: "Comment on Pull Review Request Changes from Commit"
 runs:
   using: "docker"
   image: "Dockerfile"
+inputs:
+  event:
+    description: 'Github Event'
+    required: false
+    default: '${{ github.event }}'
