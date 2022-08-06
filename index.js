@@ -1,5 +1,4 @@
 require('dotenv').config()
-const chalk = require('chalk')
 const utils = require('./utils')
 
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
@@ -36,30 +35,26 @@ const analyze = async () => {
                         },
                     },
                 } = await utils.graphql.pr(base, num).catch(console.error)
-                console.info(chalk.bgBlue(`decision: ${decision}`))
-                console.info(chalk.bgBlue(`total: ${totalThreads}`))
+                console.info(`decision: ${decision}`)
+                console.info(`total: ${totalThreads}`)
                 console.info(`\n`)
                 for (thread of threads) {
                     const {
                         isResolved: resolved,
                         viewerCanReply: canReply,
                         viewerCanResolve: canResolve,
-                        path,
+                        path: pathThread,
                         comments: {
                             pageInfo: { endCursor: cursor, hasNextPage: next },
                             totalCount: totalComments,
                             nodes: comments,
                         },
                     } = thread
-                    console.info(chalk.bgYellowBright(`resolved? ${resolved}`))
-                    console.info(chalk.bgYellowBright(`can reply? ${canReply}`))
-                    console.info(
-                        chalk.bgYellowBright(`can resolve? ${canResolve}`)
-                    )
-                    console.info(chalk.bgYellowBright(`path: ${path}`))
-                    console.info(
-                        chalk.bgYellowBright(`total: ${totalComments}`)
-                    )
+                    console.info(`resolved? ${resolved}`)
+                    console.info(`can reply? ${canReply}`)
+                    console.info(`can resolve? ${canResolve}`)
+                    console.info(`path file thread: ${pathThread}`)
+                    console.info(`total: ${totalComments}`)
                     console.info(`\n`)
                     if (!resolved && canReply /* && canResolve */) {
                         console.warn('find root comment to reply to')
@@ -67,8 +62,9 @@ const analyze = async () => {
                             const interlocutor = comment.author?.login
                             const message = comment.bodyText
                             const state = comment.state
+                            const pathComment = comment.path
                             console.info(
-                                `@${interlocutor} said:\n${message}\n(${state})`
+                                `@${interlocutor} said:\n${message}\n(${state})\npath comment ${pathComment}`
                             )
                             console.info(`\n`)
                         }
