@@ -51,46 +51,55 @@ const pr = async (owner, pr) =>
         ...PULL_REQUEST_THREAD.variables,
         pr,
         owner,
-    }).then((response) => {
-        const {
-            repository: {
-                pullRequest: {
-                    reviewThreads: {
-                        pageInfo: { endCursor: cursor, hasNextPage: next },
-                        totalCount: total,
-                        nodes: threads,
-                    },
-                    reviewDecision: decision,
-                },
-            },
-        } = response
-        threads.map((thread) => {
-            const {
-                id,
-                isResolved: resolved,
-                viewerCanReply: canReply,
-                viewerCanResolve: canResolve,
-                path,
-                comments: {
+    }).then(map_pr)
+
+const map_pr = (response) => {
+    const {
+        repository: {
+            pullRequest: {
+                reviewThreads: {
                     pageInfo: { endCursor: cursor, hasNextPage: next },
                     totalCount: total,
-                    nodes: comments,
+                    nodes: threads,
                 },
-            } = thread
-            return {
-                id,
-                resolved,
-                canReply,
-                canResolve,
-                path,
-                cursor,
-                next,
-                total,
-                comments,
-            }
-        })
-        return { cursor, next, total, threads, decision }
-    })
+                reviewDecision: decision,
+            },
+        },
+    } = response
+    return {
+        cursor,
+        next,
+        total,
+        threads: threads.map(map_thread),
+        decision,
+    }
+}
+
+const map_thread = (thread) => {
+    const {
+        id,
+        isResolved: resolved,
+        viewerCanReply: canReply,
+        viewerCanResolve: canResolve,
+        path,
+        comments: {
+            pageInfo: { endCursor: cursor, hasNextPage: next },
+            totalCount: total,
+            nodes: comments,
+        },
+    } = thread
+    return {
+        id,
+        resolved,
+        canReply,
+        canResolve,
+        path,
+        cursor,
+        next,
+        total,
+        comments,
+    }
+}
 
 const notify = async () =>
     await octokit(NOTIFY_THREAD.query, {
