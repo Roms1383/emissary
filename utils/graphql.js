@@ -45,7 +45,7 @@ const NOTIFY_THREAD = {
     query: `
 mutation MarkThreadAsDone($owner: String!, $repo: String!, $pr: ID!, $review: ID!, $body: String!) {
   addPullRequestReviewComment(input:{ owner: $owner, repo: $repo, pullRequestReviewId: $review, pullRequestId: $pr, body: $body }) {
-    comment
+    comment { id, body }
   }
 }
 `,
@@ -66,6 +66,9 @@ const notify = async (owner, pr, review, body) =>
         pr,
         review,
         body,
+    }).then((response) => {
+        console.info(response)
+        return response
     })
 
 const map_pr = (response) => {
