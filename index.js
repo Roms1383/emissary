@@ -63,9 +63,18 @@ const analyze = async () => {
                         ) {
                             console.warn('find root comment to reply to')
                             for (comment of thread.comments) {
-                                console.info(
+                                info(
+                                    'commit infos:',
                                     `@${comment.interlocutor} said:\n${comment.message}\n(${comment.state})\npath comment file: ${comment.path}\ncomment id: ${comment.id}\ncomment url: ${comment.url}`
                                 )
+                                if (
+                                    comment.url
+                                        .split('#')[1]
+                                        .substr('discussion_r'.length)
+                                )
+                                    info(
+                                        `${comment.url} matches with ${matches}`
+                                    )
                                 console.info(`\n`)
                             }
                         }
