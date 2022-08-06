@@ -20,16 +20,10 @@ const analyze = async () => {
             if (pr.state == 'open' && !pr.locked) {
                 const num = pr.number
                 const base = pr.base.repo.owner.login
-                const {
-                    repository: {
-                        pullRequest: {
-                            reviewThreads: { endCursor, hasNextPage },
-                        },
-                        reviewDecision,
-                    },
-                } = await utils.graphql.pr(base, num).catch(console.error)
-                console.info(endCursor)
-                console.info(hasNextPage)
+                const response = await utils.graphql
+                    .pr(base, num)
+                    .catch(console.error)
+                console.info(JSON.stringify(response, null, 2))
             }
         }
     }
