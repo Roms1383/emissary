@@ -62,7 +62,7 @@ const analyze = async () => {
                     console.log('\n')
                     if (!thread.resolved && thread.canReply /* && thread.canResolve */) {
                         console.warn('find root comment to reply to')
-                        for (comment of comments) {
+                        for (comment of thread.comments) {
                             const interlocutor = comment.author?.login
                             const message = comment.bodyText
                             const state = comment.state
