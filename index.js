@@ -47,7 +47,7 @@ const analyze = async () => {
                     const base = pr.base.repo.owner.login
                     const { next, threads, decision, total, reviews } =
                         await utils.graphql.pr(base, num).catch(console.error)
-                    info('pr node id', pr.id)
+                    info('pr node id', pr.node_id)
                     info('reviews', reviews, true)
                     info('decision', decision)
                     info('total', total)
@@ -79,8 +79,7 @@ const analyze = async () => {
                                         `${comment.url} matches with ${matches}`
                                     )
                                     await utils.graphql.notify(
-                                        base,
-                                        pr.id,
+                                        pr.node_id,
                                         reviews[0].id,
                                         `done in ${sha}`
                                     )

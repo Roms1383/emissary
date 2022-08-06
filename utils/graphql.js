@@ -59,10 +59,9 @@ const pr = async (owner, pr) =>
         owner,
     }).then(map_pr)
 
-const notify = async (owner, pr, review, body) =>
+const notify = async (pr, review, body) =>
     await octokit(NOTIFY_THREAD.query, {
         ...NOTIFY_THREAD.variables,
-        owner,
         pr,
         review,
         body,
