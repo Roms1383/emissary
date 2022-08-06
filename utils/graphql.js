@@ -11,7 +11,7 @@ const PULL_REQUEST_THREAD = {
 query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
 repository(owner: $owner, name: $repo) {
   pullRequest(number: $pr) {
-    node_id,
+    id,
     reviewDecision,
     reviews(last: 3) {
       pageInfo { endCursor, hasNextPage },
