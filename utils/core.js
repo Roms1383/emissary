@@ -4,10 +4,14 @@ const octokit = new Octokit({
 })
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
-const pr = (commit_sha) => await octokit.request('GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls', {
-  owner,
-  repo,
-  commit_sha
-})
+const pr = async (commit_sha) =>
+    await octokit.request(
+        'GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls',
+        {
+            owner,
+            repo,
+            commit_sha,
+        }
+    )
 
 module.exports = { pr }
