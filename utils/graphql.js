@@ -41,34 +41,12 @@ repository(owner: $owner, name: $repo) {
     variables: { repo },
 }
 
-const NOTIFY_THREAD = {
-    query: `
-mutation MarkThreadAsDone($pr: ID!, $review: ID!, $body: String!) {
-  addPullRequestReviewComment(input:{ pullRequestReviewId: $review, pullRequestId: $pr, body: $body }) {
-    comment { id, body }
-  }
-}
-`,
-    variables: {},
-}
-
 const pr = async (owner, pr) =>
     await octokit(PULL_REQUEST_THREAD.query, {
         ...PULL_REQUEST_THREAD.variables,
         pr,
         owner,
     }).then(map_pr)
-
-const notify = async (pr, review, body) =>
-    await octokit(NOTIFY_THREAD.query, {
-        ...NOTIFY_THREAD.variables,
-        pr,
-        review,
-        body,
-    }).then((response) => {
-        console.info(response)
-        return response
-    })
 
 const map_pr = (response) => {
     const {
@@ -128,14 +106,15 @@ const map_thread = (thread) => {
 
 const map_comment = (comment) => {
     const interlocutor = comment.author?.login
-    const { bodyText: message, state, path, url } = comment
+    const { bodyText: message, state, path, url, id } = comment
     return {
         message,
         state,
         path,
         interlocutor,
         url,
+        id,
     }
 }
 
-module.exports = { pr, notify }
+module.exports = { pr }

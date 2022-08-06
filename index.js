@@ -78,18 +78,16 @@ const analyze = async () => {
                                         'found!',
                                         `${comment.url} matches with ${matches}`
                                     )
-                                    // await utils.graphql.notify(
-                                    //     pr.node_id,
-                                    //     reviews[0].id,
-                                    //     `done in ${sha}`
-                                    // )
-                                    await utils.core.reply(
-                                        base,
-                                        repo,
-                                        num,
-                                        searched,
-                                        `@${commit.author?.name} done in ${sha}`
-                                    ).then(console.info).catch(console.error)
+                                    await utils.core
+                                        .reply(
+                                            base,
+                                            repo,
+                                            num,
+                                            searched,
+                                            `@${commit.author?.name} marked it as done in ${sha}`
+                                        )
+                                        .then(console.info)
+                                        .catch(console.error)
                                 }
                                 console.warn('TODO: pagination')
                                 if (comment.next) {
