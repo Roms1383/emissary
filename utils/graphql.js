@@ -43,13 +43,13 @@ repository(owner: $owner, name: $repo) {
 
 const NOTIFY_THREAD = {
     query: `
-mutation MarkThreadAsDone($owner: String!, $repo: String!, $pr: ID!, $review: ID!, $body: String!) {
-  addPullRequestReviewComment(input:{ owner: $owner, repo: $repo, pullRequestReviewId: $review, pullRequestId: $pr, body: $body }) {
+mutation MarkThreadAsDone($pr: ID!, $review: ID!, $body: String!) {
+  addPullRequestReviewComment(input:{ pullRequestReviewId: $review, pullRequestId: $pr, body: $body }) {
     comment { id, body }
   }
 }
 `,
-    variables: { repo },
+    variables: {},
 }
 
 const pr = async (owner, pr) =>
