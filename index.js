@@ -67,16 +67,18 @@ const analyze = async () => {
                                     'commit infos:',
                                     `@${comment.interlocutor} said:\n${comment.message}\n(${comment.state})\npath comment file: ${comment.path}\ncomment id: ${comment.id}\ncomment url: ${comment.url}`
                                 )
-                                if (
-                                    comment.url
-                                        .split('#')[1]
-                                        .substr('discussion_r'.length)
-                                )
+                                const searched = comment.url
+                                    .split('#')[1]
+                                    .substr('discussion_r'.length)
+                                if (searched == matches)
                                     info(
                                         'found!',
                                         `${comment.url} matches with ${matches}`
                                     )
-                                console.info(`\n`)
+                                console.warn('TODO: pagination')
+                                if (comment.next) {
+                                    console.warn('there are more comments')
+                                }
                             }
                         }
                     }
