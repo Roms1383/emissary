@@ -37,9 +37,7 @@ const analyze = async () => {
                 } = await utils.graphql.pr(base, num).catch(console.error)
                 console.info(`decision: ${decision}`)
                 console.info(`total: ${totalThreads}`)
-                const count = threads.length
                 for (thread of threads) {
-                    console.info(`thread: ${JSON.stringify(thread, null, 2)}`)
                     const {
                         isResolved: resolved,
                         viewerCanReply: canReply,
@@ -50,6 +48,18 @@ const analyze = async () => {
                             nodes: comments,
                         },
                     } = thread
+                    console.info(
+                        `resolved? ${JSON.stringify(resolved, null, 2)}`
+                    )
+                    console.info(
+                        `can reply? ${JSON.stringify(canReply, null, 2)}`
+                    )
+                    console.info(
+                        `can resolve? ${JSON.stringify(canResolve, null, 2)}`
+                    )
+                    console.info(
+                        `total: ${JSON.stringify(totalComments, null, 2)}`
+                    )
                     if (!resolved && canReply /* && canResolve */) {
                         console.warn('find root comment to reply to')
                         for (comment of comments) {
