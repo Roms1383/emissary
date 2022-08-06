@@ -46,18 +46,18 @@ const analyze = async () => {
                 prFound += 1
                 const num = pr.number
                 const base = pr.base.repo.owner.login
-                const { next, threads, decision } = await utils.graphql
+                const { next, threads, decision, total } = await utils.graphql
                     .pr(base, num)
                     .catch(console.error)
                 box('decision', decision)
-                box('total', 'totalThreads')
+                box('total', total)
                 console.log('\n')
                 for (thread of threads) {
-                    box('resolved?', resolved)
-                    box('can reply?', canReply)
-                    box('can resolve?', canResolve)
-                    box('path file thread', pathThread)
-                    box('total', totalComments)
+                    box('resolved?', thread.resolved)
+                    box('can reply?', thread.canReply)
+                    box('can resolve?', thread.canResolve)
+                    box('path file thread', tread.path)
+                    box('total', thread.total)
                     box('thread id', thread.id)
                     console.log('\n')
                     if (!resolved && canReply /* && canResolve */) {

@@ -66,6 +66,7 @@ const pr = async (owner, pr) =>
         } = response
         threads.map((thread) => {
             const {
+                id,
                 isResolved: resolved,
                 viewerCanReply: canReply,
                 viewerCanResolve: canResolve,
@@ -77,6 +78,7 @@ const pr = async (owner, pr) =>
                 },
             } = thread
             return {
+                id,
                 resolved,
                 canReply,
                 canResolve,
