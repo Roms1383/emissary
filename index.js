@@ -42,30 +42,27 @@ const analyze = async () => {
                         isResolved: resolved,
                         viewerCanReply: canReply,
                         viewerCanResolve: canResolve,
+                        path,
                         comments: {
                             pageInfo: { endCursor: cursor, hasNextPage: next },
                             totalCount: totalComments,
                             nodes: comments,
                         },
                     } = thread
-                    console.info(
-                        `resolved? ${JSON.stringify(resolved, null, 2)}`
-                    )
-                    console.info(
-                        `can reply? ${JSON.stringify(canReply, null, 2)}`
-                    )
-                    console.info(
-                        `can resolve? ${JSON.stringify(canResolve, null, 2)}`
-                    )
-                    console.info(
-                        `total: ${JSON.stringify(totalComments, null, 2)}`
-                    )
+                    console.info(`resolved? ${resolved}`)
+                    console.info(`can reply? ${canReply}`)
+                    console.info(`can resolve? ${canResolve}`)
+                    console.info(`path: ${path}`)
+                    console.info(`total: ${totalComments}`)
                     if (!resolved && canReply /* && canResolve */) {
                         console.warn('find root comment to reply to')
                         for (comment of comments) {
                             const interlocutor = comment.author?.login
                             const message = comment.bodyText
-                            console.info(`@${interlocutor} said:\n${message}`)
+                            const state = comment.state
+                            console.info(
+                                `@${interlocutor} said:\n${message}\n(${state})`
+                            )
                         }
                     }
                 }

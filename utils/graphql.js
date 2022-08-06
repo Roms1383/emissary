@@ -18,10 +18,11 @@ repository(owner: $owner, name: $repo) {
         isResolved,
         viewerCanReply,
         viewerCanResolve,
+        path,
         comments(last: 10) {
           pageInfo { endCursor, hasNextPage },
           totalCount,
-          nodes { author { login }, bodyText }
+          nodes { author { login }, bodyText, state }
         }
       },
     },
