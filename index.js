@@ -9,6 +9,8 @@ const box = (key, value) => {
             padding: 1,
             title: `${key}`,
             titleAlignment: 'center',
+            textAlignment: 'center',
+            borderStyle: 'round'
         })
     )
 }
