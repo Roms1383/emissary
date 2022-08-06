@@ -45,8 +45,9 @@ const analyze = async () => {
                     prFound += 1
                     const num = pr.number
                     const base = pr.base.repo.owner.login
-                    const { next, threads, decision, total } =
+                    const { next, threads, decision, total, reviews } =
                         await utils.graphql.pr(base, num).catch(console.error)
+                    info('reviews', reviews, true)
                     info('decision', decision)
                     info('total', total)
                     console.log('\n')
