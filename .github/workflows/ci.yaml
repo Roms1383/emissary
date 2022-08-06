@@ -15,7 +15,7 @@ jobs:
       - name: setup NodeJS
         uses: dcodeIO/setup-node-nvm@master
         with:
-          node-version: "16.16.0"
+          node-version: read -r line < .nvmrc
 
       - name: install dependencies
         run: npm ci
@@ -33,7 +33,7 @@ jobs:
       - name: setup NodeJS
         uses: dcodeIO/setup-node-nvm@master
         with:
-          node-version: "16.16.0"
+          node-version: read -r line < .nvmrc
 
       - name: install dependencies
         run: npm ci
