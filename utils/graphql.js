@@ -17,7 +17,7 @@ repository(owner: $owner, name: $repo) {
 }
 }
 `,
-    variables: { owner, repo },
+    variables: { repo },
 }
 
 const pr = async (owner, pr) =>
