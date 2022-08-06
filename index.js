@@ -64,7 +64,7 @@ const analyze = async () => {
                             const state = comment.state
                             const pathComment = comment.path
                             console.info(
-                                `@${interlocutor} said:\n${message}\n(${state})\npath comment ${pathComment}`
+                                `@${interlocutor} said:\n${message}\n(${state})\npath comment file: ${pathComment}\ncomment id: ${comment.id}`
                             )
                             console.info(`\n`)
                         }

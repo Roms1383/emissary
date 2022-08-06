@@ -22,7 +22,7 @@ repository(owner: $owner, name: $repo) {
         comments(last: 10) {
           pageInfo { endCursor, hasNextPage },
           totalCount,
-          nodes { author { login }, bodyText, state, path }
+          nodes { author { login }, bodyText, state, path, id }
         }
       },
     },
