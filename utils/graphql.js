@@ -97,7 +97,18 @@ const map_thread = (thread) => {
         cursor,
         next,
         total,
-        comments,
+        comments: comments.map(map_comment),
+    }
+}
+
+const map_comment = (comment) => {
+    const interlocutor = comment.author?.login
+    const { bodyText: message, state, path } = comment.bodyText
+    return {
+        message,
+        state,
+        path,
+        interlocutor,
     }
 }
 

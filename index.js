@@ -46,16 +46,16 @@ const analyze = async () => {
                     const base = pr.base.repo.owner.login
                     const { next, threads, decision, total } =
                         await utils.graphql.pr(base, num).catch(console.error)
-                    box('decision', decision)
-                    box('total', total)
+                    info('decision', decision)
+                    info('total', total)
                     console.log('\n')
                     for (thread of threads) {
-                        box('thread id', thread.id)
-                        box('is thread resolved?', thread.resolved)
-                        box('can viewer reply to thread?', thread.canReply)
-                        box('can viewer resolve thread?', thread.canResolve)
-                        box('path file thread', thread.path)
-                        box('total comments', thread.total)
+                        info('thread id', thread.id)
+                        info('is thread resolved?', thread.resolved)
+                        info('can viewer reply to thread?', thread.canReply)
+                        info('can viewer resolve thread?', thread.canResolve)
+                        info('path file thread', thread.path)
+                        info('total comments', thread.total)
                         console.log('\n')
                         if (
                             !thread.resolved &&
@@ -63,10 +63,12 @@ const analyze = async () => {
                         ) {
                             console.warn('find root comment to reply to')
                             for (comment of thread.comments) {
-                                const interlocutor = comment.author?.login
-                                const message = comment.bodyText
-                                const state = comment.state
-                                const pathComment = comment.path
+                                const {
+                                    interlocutor,
+                                    message,
+                                    state,
+                                    path: pathComment,
+                                } = comment
                                 console.info(
                                     `@${interlocutor} said:\n${message}\n(${state})\npath comment file: ${pathComment}\ncomment id: ${comment.id}`
                                 )
