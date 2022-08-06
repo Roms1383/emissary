@@ -36,8 +36,9 @@ const analyze = async () => {
                         },
                     },
                 } = await utils.graphql.pr(base, num).catch(console.error)
-                console.info(chalk.bgCyan(`decision: ${decision}`))
-                console.info(chalk.bgCyan(`total: ${totalThreads}`))
+                console.info(chalk.bgBlue(`decision: ${decision}`))
+                console.info(chalk.bgBlue(`total: ${totalThreads}`))
+                console.info(`\n`)
                 for (thread of threads) {
                     const {
                         isResolved: resolved,
@@ -50,11 +51,16 @@ const analyze = async () => {
                             nodes: comments,
                         },
                     } = thread
-                    console.info(chalk.bgMagenta(`resolved? ${resolved}`))
-                    console.info(chalk.bgMagenta(`can reply? ${canReply}`))
-                    console.info(chalk.bgMagenta(`can resolve? ${canResolve}`))
-                    console.info(chalk.bgMagenta(`path: ${path}`))
-                    console.info(chalk.bgMagenta(`total: ${totalComments}`))
+                    console.info(chalk.bgYellowBright(`resolved? ${resolved}`))
+                    console.info(chalk.bgYellowBright(`can reply? ${canReply}`))
+                    console.info(
+                        chalk.bgYellowBright(`can resolve? ${canResolve}`)
+                    )
+                    console.info(chalk.bgYellowBright(`path: ${path}`))
+                    console.info(
+                        chalk.bgYellowBright(`total: ${totalComments}`)
+                    )
+                    console.info(`\n`)
                     if (!resolved && canReply /* && canResolve */) {
                         console.warn('find root comment to reply to')
                         for (comment of comments) {
@@ -64,6 +70,7 @@ const analyze = async () => {
                             console.info(
                                 `@${interlocutor} said:\n${message}\n(${state})`
                             )
+                            console.info(`\n`)
                         }
                     }
                 }
