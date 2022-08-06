@@ -39,10 +39,8 @@ const analyze = async () => {
                 console.info(`total: ${total}`)
                 const count = threads.length
                 for (thread of threads) {
-                    const {
-                        author: { login: contributor },
-                        bodyText: message,
-                    } = thread
+                    const contributor = thread.author?.login
+                    const message = thread.bodyText
                     console.info(
                         `contributor @${contributor} committed with:\n${message}`
                     )
