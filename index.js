@@ -89,7 +89,7 @@ const analyze = async () => {
                                         num,
                                         searched,
                                         `done in ${sha}`
-                                    )
+                                    ).then(console.info).catch(console.error)
                                 }
                                 console.warn('TODO: pagination')
                                 if (comment.next) {
