@@ -45,10 +45,9 @@ const analyze = async () => {
                     prFound += 1
                     const num = pr.number
                     const base = pr.base.repo.owner.login
-                    const prNodeId = pr.id
                     const { next, threads, decision, total, reviews } =
                         await utils.graphql.pr(base, num).catch(console.error)
-                    info('pr node id', prNodeId)
+                    info('pr node id', pr.id)
                     info('reviews', reviews, true)
                     info('decision', decision)
                     info('total', total)
@@ -78,6 +77,12 @@ const analyze = async () => {
                                     info(
                                         'found!',
                                         `${comment.url} matches with ${matches}`
+                                    )
+                                    await utils.graphql.notify(
+                                        base,
+                                        pr.id,
+                                        reviews[0].id,
+                                        `done in ${sha}`
                                     )
                                 }
                                 console.warn('TODO: pagination')
