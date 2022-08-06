@@ -11,7 +11,7 @@ const PULL_REQUEST_THREAD = {
 query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
 repository(owner: $owner, name: $repo) {
   pullRequest(number: $pr) {
-    reviewThreads(last: 10) { pageInfo { endCursor, hasNextPage } },
+    reviewThreads(last: 10) { pageInfo { endCursor, hasNextPage }, totalCount },
     reviewDecision
   }
 }

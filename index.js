@@ -22,12 +22,14 @@ const analyze = async () => {
                 const base = pr.base.repo.owner.login
                 const {
                     repository: {
-                        pullRequest: { reviewThreads },
+                        pullRequest: {
+                            reviewThreads: { endCursor, hasNextPage },
+                        },
                         reviewDecision,
                     },
                 } = await utils.graphql.pr(base, num).catch(console.error)
-                console.info(reviewThreads)
-                console.info(reviewDecision)
+                console.info(endCursor)
+                console.info(hasNextPage)
             }
         }
     }
