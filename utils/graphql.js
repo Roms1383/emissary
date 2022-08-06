@@ -35,11 +35,68 @@ repository(owner: $owner, name: $repo) {
     variables: { repo },
 }
 
+const NOTIFY_THREAD = {
+    query: `
+mutation MarkThreadAsDone($owner: String!, $repo: String!, $pr: Int!, $review: String!, $thread: String!) {
+  addPullRequestReviewComment(input:{owner: $owner, repo: $repo}) {
+    comment
+  }
+}
+`,
+    variables: { repo },
+}
+
 const pr = async (owner, pr) =>
     await octokit(PULL_REQUEST_THREAD.query, {
         ...PULL_REQUEST_THREAD.variables,
         pr,
         owner,
+    }).then((response) => {
+        const {
+            repository: {
+                pullRequest: {
+                    reviewThreads: {
+                        pageInfo: { endCursor: cursor, hasNextPage: next },
+                        totalCount: total,
+                        nodes: threads,
+                    },
+                    reviewDecision: decision,
+                },
+            },
+        } = response
+        threads.map((thread) => {
+            const {
+                isResolved: resolved,
+                viewerCanReply: canReply,
+                viewerCanResolve: canResolve,
+                path,
+                comments: {
+                    pageInfo: { endCursor: cursor, hasNextPage: next },
+                    totalCount: total,
+                    nodes: comments,
+                },
+            } = thread
+            return {
+                resolved,
+                canReply,
+                canResolve,
+                path,
+                cursor,
+                next,
+                total,
+                comments,
+            }
+        })
+        return { cursor, next, total, threads, decision }
     })
 
-module.exports = { pr }
+const notify = async () =>
+    await octokit(NOTIFY_THREAD.query, {
+        ...NOTIFY_THREAD.variables,
+        owner,
+        pr,
+        review,
+        thread,
+    })
+
+module.exports = { pr, notify }
