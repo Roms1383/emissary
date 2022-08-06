@@ -13,15 +13,21 @@ const analyze = async () => {
     console.info(ref)
     for (commit of commits) {
         console.info(`searching for pr related to ${commit.id}`)
-        let { data: prs } = await utils.core.pr(commit.id).catch(console.error)
+        const { data: prs } = await utils.core
+            .pr(commit.id)
+            .catch(console.error)
         for (pr of prs) {
             if (pr.state == 'open' && !pr.locked) {
                 const num = pr.number
                 const base = pr.base.repo.owner.login
-                await utils.graphql
-                    .pr(base, num)
-                    .then(console.info)
-                    .catch(console.error)
+                const {
+                    repository: {
+                        pullRequest: { reviewThreads },
+                        reviewDecision,
+                    },
+                } = await utils.graphql.pr(base, num).catch(console.error)
+                console.info(reviewThreads)
+                console.info(reviewDecision)
             }
         }
     }
