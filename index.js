@@ -10,7 +10,7 @@ const box = (key, value) => {
             title: `${key}`,
             titleAlignment: 'center',
             textAlignment: 'center',
-            borderStyle: 'round'
+            borderStyle: 'round',
         })
     )
 }
@@ -36,10 +36,12 @@ const analyze = async () => {
         .then(JSON.parse)
     box('ref', ref)
     box('total commits', commits.length)
+    let commitsMatch = 0
     for (commit of commits) {
         const sha = commit.id
         const matches = utils.matches(commit.message)
         if (matches) {
+            commitsMatch += 1
             box('found pattern', matches)
             const { data: prs } = await utils.core.pr(sha).catch(console.error)
             let prFound = 0
@@ -86,6 +88,7 @@ const analyze = async () => {
             }
         }
     }
+    box('total commits matches', commitsMatch)
 }
 
 analyze()
