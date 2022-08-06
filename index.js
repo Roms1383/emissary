@@ -28,7 +28,7 @@ const analyze = async () => {
                                     endCursor: cursor,
                                     hasNextPage: next,
                                 },
-                                totalCount: total,
+                                totalCount: totalThreads,
                                 nodes: threads,
                             },
                             reviewDecision: decision,
@@ -36,12 +36,28 @@ const analyze = async () => {
                     },
                 } = await utils.graphql.pr(base, num).catch(console.error)
                 console.info(`decision: ${decision}`)
-                console.info(`total: ${total}`)
+                console.info(`total: ${totalThreads}`)
                 const count = threads.length
                 for (thread of threads) {
                     console.info(`thread: ${JSON.stringify(thread, null, 2)}`)
-                    const contributor = thread.author?.login
-                    const message = thread.bodyText
+                    const {
+                        isResolved: resolved,
+                        viewerCanReply: canReply,
+                        viewerCanResolve: canResolve,
+                        comments: {
+                            pageInfo: { endCursor: cursor, hasNextPage: next },
+                            totalCount: totalComments,
+                            nodes: comments,
+                        },
+                    } = thread
+                    if (!resolved && canReply /* && canResolve */) {
+                        console.warn('find root comment to reply to')
+                        for (comment of comments) {
+                            const interlocutor = comment.author?.login
+                            const message = comment.bodyText
+                            console.info(`@${interlocutor} said:\n${message}`)
+                        }
+                    }
                     console.info(
                         `contributor @${contributor} committed with:\n${message}`
                     )
