@@ -21,7 +21,7 @@ repository(owner: $owner, name: $repo) {
         comments(last: 10) {
           pageInfo { endCursor, hasNextPage },
           totalCount,
-          nodes { author, bodyText }
+          nodes { author { login }, bodyText }
         }
       },
     },
