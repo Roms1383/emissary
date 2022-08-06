@@ -11,6 +11,11 @@ const PULL_REQUEST_THREAD = {
 query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
 repository(owner: $owner, name: $repo) {
   pullRequest(number: $pr) {
+    reviews(last: 3) {
+      pageInfo { endCursor, hasNextPage },
+      totalCount,
+      nodes { id }
+    }
     reviewThreads(last: 10) {
       pageInfo { endCursor, hasNextPage },
       totalCount,
@@ -37,8 +42,8 @@ repository(owner: $owner, name: $repo) {
 
 const NOTIFY_THREAD = {
     query: `
-mutation MarkThreadAsDone($owner: String!, $repo: String!, $pr: Int!, $review: String!, $thread: String!) {
-  addPullRequestReviewComment(input:{owner: $owner, repo: $repo}) {
+mutation MarkThreadAsDone($owner: String!, $repo: String!, $pr: ID!, $review: ID!, $body: String!) {
+  addPullRequestReviewComment(input:{ owner: $owner, repo: $repo, pullRequestReviewId: $review, pullRequestId: $pr, body: $body }) {
     comment
   }
 }
@@ -53,10 +58,24 @@ const pr = async (owner, pr) =>
         owner,
     }).then(map_pr)
 
+const notify = async (owner, pr, review, body) =>
+    await octokit(NOTIFY_THREAD.query, {
+        ...NOTIFY_THREAD.variables,
+        owner,
+        pr,
+        review,
+        body,
+    })
+
 const map_pr = (response) => {
     const {
         repository: {
             pullRequest: {
+                reviews: {
+                    // pageInfo: { endCursor: cursor, hasNextPage: next },
+                    // totalCount: total,
+                    nodes: reviews,
+                },
                 reviewThreads: {
                     pageInfo: { endCursor: cursor, hasNextPage: next },
                     totalCount: total,
@@ -72,6 +91,7 @@ const map_pr = (response) => {
         total,
         threads: threads.map(map_thread),
         decision,
+        reviews,
     }
 }
 
@@ -112,14 +132,5 @@ const map_comment = (comment) => {
         url,
     }
 }
-
-const notify = async () =>
-    await octokit(NOTIFY_THREAD.query, {
-        ...NOTIFY_THREAD.variables,
-        owner,
-        pr,
-        review,
-        thread,
-    })
 
 module.exports = { pr, notify }
