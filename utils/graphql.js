@@ -23,7 +23,7 @@ repository(owner: $owner, name: $repo) {
         comments(last: 10) {
           pageInfo { endCursor, hasNextPage },
           totalCount,
-          nodes { author { login }, bodyText, state, path, id }
+          nodes { author { login }, bodyText, state, path, id, url }
         }
       },
     },
@@ -103,12 +103,13 @@ const map_thread = (thread) => {
 
 const map_comment = (comment) => {
     const interlocutor = comment.author?.login
-    const { bodyText: message, state, path } = comment.bodyText
+    const { bodyText: message, state, path, url } = comment
     return {
         message,
         state,
         path,
         interlocutor,
+        url,
     }
 }
 
