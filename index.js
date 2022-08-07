@@ -36,14 +36,19 @@ const action = async () => {
                                     info(
                                         `${matches.act} discussion ${searched} in thread ${thread.id} in PR ${pr.number}`
                                     )
+                                    const act =
+                                        matches.act === 'reply'
+                                            ? 'marked it as done'
+                                            : 'resolved it'
+                                    let message = `@${commit.author?.name} ${act} in ${sha}`
+                                    if (matches.extra)
+                                        message = `${message}\n${matches.extra}`
                                     await utils.core.reply(
                                         pr.base?.repo?.owner?.login,
                                         repo,
                                         pr.number,
                                         searched,
-                                        matches.extra
-                                            ? `@${commit.author?.name} ${matches.act} it in ${sha}\n${matches.extra}`
-                                            : `@${commit.author?.name} ${matches.act} it in ${sha}`
+                                        message
                                     )
                                     if (matches.act === 'resolve') {
                                         await utils.graphql.resolve(thread.id)
@@ -69,7 +74,7 @@ const action = async () => {
         `push event contains ${total.commits} commit(s), ${
             total.matches
         } match(es): ${total.replied} discussion${
-            total.replied + total.resolved > 1 ? 's' : ''
+            total.replied > 1 ? 's' : ''
         } replied to and ${total.resolved} directly resolved`
     )
     info('finished')
