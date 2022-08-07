@@ -17,7 +17,7 @@ const action = async () => {
         const sha = commit.id
         const matches = utils.matches(commit.message)
         if (matches && commit.distinct) {
-            total.matches++
+            total.matches += 1
             const { data: prs } = await utils.core.pr(sha)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
@@ -52,8 +52,10 @@ const action = async () => {
                                     )
                                     if (matches.act === 'resolve') {
                                         await utils.graphql.resolve(thread.id)
-                                        total.resolved++
-                                    } else total.replied++
+                                        total.resolved += 1
+                                    } else {
+                                        total.replied += 1
+                                    }
                                 }
                                 warning('TODO: pagination')
                                 if (comment.next) {
