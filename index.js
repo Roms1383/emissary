@@ -6,13 +6,40 @@ const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 const analyze = async () => {
     const event = await utils.event()
     const { commits, ref } = event
+    const main = event.repository.master_branch
+    if (event.created) {
+        console.info(
+            'emissary does not act on a freshly created branch, skipping...'
+        )
+        return
+    }
+    if (event.deleted) {
+        console.info('emissary does not act on a deleted branch, skipping...')
+        return
+    }
+    if (event.forced) {
+        console.info(
+            'emissary does not act on force-pushed commit(s), skipping...'
+        )
+        return
+    }
+    if (event.repository?.disabled) {
+        console.info(
+            'emissary does not act on disabled repository, skipping...'
+        )
+        return
+    }
+    if (ref === `refs/heads/${main}`) {
+        console.info('emissary does not act on your main branch, skipping...')
+        return
+    }
     // info('github.event', event, true)
     // info('ref', ref)
     // info('commits', commits.map(({ id }) => id).join(', '))
     for (commit of commits) {
         const sha = commit.id
         const matches = utils.matches(commit.message)
-        if (matches) {
+        if (matches && commit.distinct) {
             // box('found pattern', matches)
             const { data: prs } = await utils.core.pr(sha)
             // info('prs', prs, true)
