@@ -61,8 +61,8 @@ const analyze = async () => {
                         info('total comments', thread.total)
                         console.log('\n')
                         if (
-                            !thread.resolved &&
-                            thread.canReply /* && thread.canResolve */
+                            !thread.resolved /*  &&
+                            thread.canReply && thread.canResolve */
                         ) {
                             console.warn('find root comment to reply to')
                             for (comment of thread.comments) {
