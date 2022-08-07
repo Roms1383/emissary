@@ -8,20 +8,21 @@ const action = async () => {
     if (event === 'skip') process.exit(0)
 
     const { commits } = event
-    const total = {}
-    total.commits = commits.length
-    total.matches = 0
-    total.replied = 0
-    total.resolved = 0
+    const total = {
+        commits: commits.length,
+        matches: 0,
+        replied: 0,
+        resolved: 0,
+    }
     for (commit of commits) {
         const sha = commit.id
         const matches = utils.matches(commit.message)
         if (matches && commit.distinct) {
-            total.matches += 1
+            total.matches++
             const { data: prs } = await utils.core.pr(sha)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
-                    const { next, threads, decision, total, reviews } =
+                    const { next, threads, decision, reviews } =
                         await utils.graphql.pr(
                             pr.base?.repo?.owner?.login,
                             pr.number
@@ -52,9 +53,9 @@ const action = async () => {
                                     )
                                     if (matches.act === 'resolve') {
                                         await utils.graphql.resolve(thread.id)
-                                        total.resolved += 1
+                                        total.resolved++
                                     } else {
-                                        total.replied += 1
+                                        total.replied++
                                     }
                                 }
                                 warning('TODO: pagination')
