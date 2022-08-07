@@ -47,7 +47,7 @@ const eventOrSkip = async () =>
 
 const matches = (ref) => {
     let found = ref.match(
-        /(reply|resolve) (discussion|discussion_r|review)(\-|\_| )?([0-9]{9,})(.*)/im
+        /(reply|resolve) (discussion|discussion_r)(\-|\_| +)?([0-9]{9,})(.*)/im
     )
     return found
         ? {

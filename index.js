@@ -32,7 +32,7 @@ const action = async () => {
                                     .substr('discussion_r'.length)
                                 if (searched === matches.discussion) {
                                     info(
-                                        `${matches.act}ing to PR ${pr.number} thread ${thread.id} discussion ${searched}`
+                                        `${matches.act} discussion ${searched} in thread ${thread.id} in PR ${pr.number}`
                                     )
                                     await utils.core.reply(
                                         pr.base?.repo?.owner?.login,
