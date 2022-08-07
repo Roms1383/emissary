@@ -1,4 +1,4 @@
-name: "Comment on Pull Review Request Changes from Commit"
+name: "Emissary"
 description: "Comment on Pull Review Request Changes from Commit"
 runs:
   using: "docker"

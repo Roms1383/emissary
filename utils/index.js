@@ -3,7 +3,6 @@ const fs = require('fs').promises
 const core = require('./core')
 const rest = require('./rest')
 const graphql = require('./graphql')
-const log = require('./log')
 
 const maybe_skip = (event) => {
     if (
@@ -68,5 +67,4 @@ module.exports = {
     core,
     rest,
     graphql,
-    log,
 }
