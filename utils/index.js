@@ -46,7 +46,7 @@ const eventOrSkip = async () =>
         .then((event) => (maybe_skip(event) ? 'skip' : event))
 
 const matches = (ref) => {
-    let found = ref.match(/#resolves? discussion_r([0-9]{9,}).*/im)
+    let found = ref.match(/(reply|resolve) (discussion|discussion_r|review)(\-|\_| )?([0-9]{9,}).*/im)
     return found ? found[1] : false
 }
 
