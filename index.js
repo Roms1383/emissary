@@ -5,16 +5,14 @@ const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
 const analyze = async () => {
     const event = await utils.event()
-    info('github.event', event, true)
     const { commits, ref } = event
+    info('github.event', event, true)
     info('ref', ref)
     info('commits', commits.map(({ id }) => id).join(', '))
-    let commitsMatch = 0
     for (commit of commits) {
         const sha = commit.id
         const matches = utils.matches(commit.message)
         if (matches) {
-            commitsMatch += 1
             box('found pattern', matches)
             const { data: prs } = await utils.core.pr(sha).catch(console.error)
             let prFound = 0
@@ -84,7 +82,6 @@ const analyze = async () => {
             }
         }
     }
-    box('total commits matches', commitsMatch)
 }
 
 analyze()
