@@ -8,12 +8,12 @@ const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
 const LIST_THREADS = {
     query: `
-query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
+query pullRequestThread($owner: String!, $repo: String!, $pr: Int!, $reviewsBefore: String) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
       reviewDecision,
-      reviews(last: 3) {
+      reviews(last: 3, before: $reviewsBefore) {
         pageInfo { endCursor, hasNextPage },
         totalCount,
         nodes { id, body }
