@@ -14,7 +14,7 @@ const analyze = async () => {
         const matches = utils.matches(commit.message)
         if (matches) {
             box('found pattern', matches)
-            const { data: prs } = await utils.core.pr(sha).catch(console.error)
+            const { data: prs } = await utils.core.pr(sha)
             let prFound = 0
             info('prs', prs, true)
             for (pr of prs) {
@@ -23,7 +23,7 @@ const analyze = async () => {
                     const num = pr.number
                     const base = pr.base.repo.owner.login
                     const { next, threads, decision, total, reviews } =
-                        await utils.graphql.pr(base, num).catch(console.error)
+                        await utils.graphql.pr(base, num)
                     info('pr node id', pr.node_id)
                     info('reviews', reviews, true)
                     info('decision', decision)
@@ -64,7 +64,6 @@ const analyze = async () => {
                                             `@${commit.author?.name} marked it as done in ${sha}`
                                         )
                                         .then(console.info)
-                                        .catch(console.error)
                                     await utils.graphql.resolve(thread.id)
                                 }
                                 console.warn('TODO: pagination')
@@ -84,6 +83,6 @@ const analyze = async () => {
     }
 }
 
-analyze()
+analyze().catch(console.error)
 
 module.exports = analyze
