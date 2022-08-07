@@ -2,7 +2,7 @@ require('dotenv').config()
 const utils = require('./utils')
 const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
-const analyze = async () => {
+const action = async () => {
     const event = await utils.event()
     const { commits, ref } = event
     const main = event.repository.master_branch
@@ -79,6 +79,6 @@ const analyze = async () => {
     }
 }
 
-analyze().catch(console.error)
+action().catch(console.error)
 
-module.exports = analyze
+module.exports = action
