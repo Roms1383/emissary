@@ -1,33 +1,12 @@
 require('dotenv').config()
-const boxen = require('boxen')
 const utils = require('./utils')
+const { box, info } = utils.log
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
-const box = (key, value, stringify) => {
-    if (stringify) value = JSON.stringify(value, null, 2)
-    console.log(
-        boxen(`${value}`, {
-            padding: 1,
-            title: `${key}`,
-            float: 'center',
-            titleAlignment: 'center',
-            textAlignment: 'left',
-            borderStyle: 'round',
-        })
-    )
-}
-
-const info = (key, value, stringify) => {
-    if (stringify) value = JSON.stringify(value, null, 2)
-    console.info(`${key}:\n${value}\n`)
-}
-
 const analyze = async () => {
-    const eventPath = await utils
-        .read(`${process.env.GITHUB_EVENT_PATH}`)
-        .then(JSON.parse)
-    info('github.event', eventPath, true)
-    const { commits, ref } = eventPath
+    const event = await utils.event()
+    info('github.event', event, true)
+    const { commits, ref } = event
     info('ref', ref)
     info('commits', commits.map(({ id }) => id).join(', '))
     let commitsMatch = 0
