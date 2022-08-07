@@ -53,15 +53,14 @@ mutation resolveThread($thread: ID!) {
 }
 
 const pr = async (owner, pr) =>
-    await octokit(LIST_THREADS.query, {
+    octokit(LIST_THREADS.query, {
         ...LIST_THREADS.variables,
         pr,
         owner,
     }).then(map_pr)
 
-const resolve = async (thread) => {
-    await octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread })
-}
+const resolve = async (thread) =>
+    octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread })
 
 const map_pr = (response) => {
     const {

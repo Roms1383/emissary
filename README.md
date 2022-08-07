@@ -88,4 +88,6 @@ e.g. from frb: <https://github.com/fzyzcjy/flutter_rust_bridge/pull/605#discussi
 
 ### work in progress
 
-beware that commit SHA is from forked repository but review threads must be retrieved from main repository.
+- beware that commit SHA is from forked repository but review threads must be retrieved from main repository.
+- beware that octokit request 'GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls' works in private repo **when run from Github Action**
+but won't simply work when queried from outside (e.g. from integration tests). that's why it might be required to setup a fake repo for tests.

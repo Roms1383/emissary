@@ -1,8 +1,4 @@
 const utils = require('../utils')
-let octokit = require('@octokit/rest')
-
-octokit = jest.fn()
-octokit.authenticate = jest.fn()
 
 describe('comment', () => {
     it('should return false if commit does NOT include a comment', async () => {
