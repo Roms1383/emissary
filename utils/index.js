@@ -47,12 +47,15 @@ const eventOrSkip = async () =>
 
 const matches = (ref) => {
     let found = ref.match(
-        /(reply|resolve) (discussion|discussion_r)(\-|\_| +)?([0-9]{9,})(.*)/im
+        /(reply|replies|replied|resolve|resolves|resolved) +(discussion|discussion_r)(\-|\_| +)?([0-9]{9,})(.*)/im
     )
     return found
         ? {
-              act: found[1],
-              topic: found[2],
+              act: ['reply', 'replies', 'replied'].includes(
+                  found[1].toLowerCase()
+              )
+                  ? 'reply'
+                  : 'resolve',
               discussion: found[4],
               extra: found[5].trim(),
           }
