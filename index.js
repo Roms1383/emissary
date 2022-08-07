@@ -47,8 +47,8 @@ const analyze = async () => {
                 if (pr.state == 'open' && !pr.locked) {
                     const { next, threads, decision, total, reviews } =
                         await utils.graphql.pr(
-                            pr.number,
-                            pr.base?.repo?.owner?.login
+                            pr.base?.repo?.owner?.login,
+                            pr.number
                         )
                     // info('pr node id', pr.node_id)
                     // info('reviews', reviews, true)
