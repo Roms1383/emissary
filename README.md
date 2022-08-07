@@ -68,6 +68,8 @@ repository
 
 graph ql api [for discussions](https://docs.github.com/en/graphql/guides/using-the-graphql-api-for-discussions)
 
+especially [Queries](https://docs.github.com/en/graphql/reference/queries) and [Objects](https://docs.github.com/en/graphql/reference/objects)
+
 - addDiscussionComment
 - markDiscussionCommentAsAnswer
 - PullRequestReviewThread [v4] (isResolved, isOutdated, pullRequest)
@@ -83,3 +85,9 @@ Can be one of: APPROVE, REQUEST_CHANGES, COMMENT
 ### samples
 
 e.g. from frb: <https://github.com/fzyzcjy/flutter_rust_bridge/pull/605#discussion_r935453437>
+
+### work in progress
+
+- beware that commit SHA is from forked repository but review threads must be retrieved from main repository.
+- beware that octokit request 'GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls' works in private repo **when run from Github Action**
+but won't simply work when queried from outside (e.g. from integration tests). that's why it might be required to setup a fake repo for tests.
