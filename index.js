@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { info, warning, error } = require('@actions/core')
 const utils = require('./utils')
 const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
@@ -7,10 +8,14 @@ const action = async () => {
     if (event === 'skip') process.exit(0)
 
     const { commits } = event
+    info(
+        `examining ${commits.length} commit${commits.length > 1 ? 's' : ''}...`
+    )
     for (commit of commits) {
         const sha = commit.id
         const matches = utils.matches(commit.message)
         if (matches && commit.distinct) {
+            info(`found distinct commit matching... (${sha})`)
             const { data: prs } = await utils.core.pr(sha)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
@@ -26,7 +31,7 @@ const action = async () => {
                                     .split('#')[1]
                                     .substr('discussion_r'.length)
                                 if (searched === matches.discussion) {
-                                    console.info(
+                                    info(
                                         `${matches.act}ing to PR ${pr.number} thread ${thread.id} discussion ${searched}`
                                     )
                                     await utils.core.reply(
@@ -39,24 +44,24 @@ const action = async () => {
                                     if (matches.act === 'resolve')
                                         await utils.graphql.resolve(thread.id)
                                 }
-                                console.warn('TODO: pagination')
+                                warning('TODO: pagination')
                                 if (comment.next) {
-                                    console.warn('there are more comments')
+                                    warning('there are more comments')
                                 }
                             }
                         }
                     }
-                    console.warn('TODO: pagination')
+                    warning('TODO: pagination')
                     if (next) {
-                        console.warn('there are more threads')
+                        warning('there are more threads')
                     }
                 }
             }
         }
     }
-    console.info('finished')
+    info('finished')
 }
 
-action().catch(console.error)
+action().catch(error)
 
 module.exports = action
