@@ -11,6 +11,8 @@ const action = async () => {
     const total = {}
     total.commits = commits.length
     total.matches = 0
+    total.replied = 0
+    total.resolved = 0
     for (commit of commits) {
         const sha = commit.id
         const matches = utils.matches(commit.message)
@@ -43,8 +45,10 @@ const action = async () => {
                                             ? `@${commit.author?.name} ${matches.act} it in ${sha}\n${matches.extra}`
                                             : `@${commit.author?.name} ${matches.act} it in ${sha}`
                                     )
-                                    if (matches.act === 'resolve')
+                                    if (matches.act === 'resolve') {
                                         await utils.graphql.resolve(thread.id)
+                                        total.resolved++
+                                    } else total.replied++
                                 }
                                 warning('TODO: pagination')
                                 if (comment.next) {
@@ -62,7 +66,11 @@ const action = async () => {
         }
     }
     info(
-        `push event contains ${total.commits} commit(s), ${total.matches} match(es)`
+        `push event contains ${total.commits} commit(s), ${
+            total.matches
+        } match(es): ${total.replied} discussion${
+            total.replied + total.resolved > 1 ? 's' : ''
+        } replied to and ${total.resolved} directly resolved`
     )
     info('finished')
 }
