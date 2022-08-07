@@ -10,7 +10,7 @@ const LIST_THREADS = {
     query: `
 query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
   repository(owner: $owner, name: $repo) {
-    pullRequest(number: $pr, states: ['open']) {
+    pullRequest(number: $pr, states: ["open"]) {
       id,
       reviewDecision,
       reviews(last: 3) {
