@@ -25,7 +25,10 @@ const action = async () => {
                                 const searched = comment.url
                                     .split('#')[1]
                                     .substr('discussion_r'.length)
-                                if (searched === matches) {
+                                if (searched === matches.discussion) {
+                                    console.info(
+                                        `${matches.act}ing to PR ${pr.number} thread ${thread.id} discussion ${searched}`
+                                    )
                                     await utils.core.reply(
                                         pr.base?.repo?.owner?.login,
                                         repo,
@@ -33,7 +36,8 @@ const action = async () => {
                                         searched,
                                         `@${commit.author?.name} marked it as done in ${sha}`
                                     )
-                                    await utils.graphql.resolve(thread.id)
+                                    if (matches.act === 'resolve')
+                                        await utils.graphql.resolve(thread.id)
                                 }
                                 console.warn('TODO: pagination')
                                 if (comment.next) {
@@ -50,6 +54,7 @@ const action = async () => {
             }
         }
     }
+    console.info('finished')
 }
 
 action().catch(console.error)

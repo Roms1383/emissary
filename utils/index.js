@@ -46,8 +46,10 @@ const eventOrSkip = async () =>
         .then((event) => (maybe_skip(event) ? 'skip' : event))
 
 const matches = (ref) => {
-    let found = ref.match(/(reply|resolve) (discussion|discussion_r|review)(\-|\_| )?([0-9]{9,}).*/im)
-    return found ? found[1] : false
+    let found = ref.match(
+        /(reply|resolve) (discussion|discussion_r|review)(\-|\_| )?([0-9]{9,}).*/im
+    )
+    return found ? { act: found[1], topic: found[2], discussion: found[4] } : false
 }
 
 module.exports = {
