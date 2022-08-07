@@ -6,42 +6,42 @@ const octokit = graphql.defaults({
 })
 const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
-const PULL_REQUEST_THREAD = {
+const LIST_THREADS = {
     query: `
 query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
-repository(owner: $owner, name: $repo) {
-  pullRequest(number: $pr) {
-    id,
-    reviewDecision,
-    reviews(last: 3) {
-      pageInfo { endCursor, hasNextPage },
-      totalCount,
-      nodes { id, body }
-    }
-    reviewThreads(last: 10) {
-      pageInfo { endCursor, hasNextPage },
-      totalCount,
-      nodes {
-        id,
-        isResolved,
-        viewerCanReply,
-        viewerCanResolve,
-        path,
-        comments(last: 10) {
-          pageInfo { endCursor, hasNextPage },
-          totalCount,
-          nodes { author { login }, bodyText, state, path, id, url }
-        }
-      },
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr, states: ['open']) {
+      id,
+      reviewDecision,
+      reviews(last: 3) {
+        pageInfo { endCursor, hasNextPage },
+        totalCount,
+        nodes { id, body }
+      }
+      reviewThreads(last: 10) {
+        pageInfo { endCursor, hasNextPage },
+        totalCount,
+        nodes {
+          id,
+          isResolved,
+          viewerCanReply,
+          viewerCanResolve,
+          path,
+          comments(last: 10) {
+            pageInfo { endCursor, hasNextPage },
+            totalCount,
+            nodes { author { login }, bodyText, state, path, id, url }
+          }
+        },
+      }
     }
   }
-}
 }
 `,
     variables: { repo },
 }
 
-const RESOLVE_PULL_REQUEST_THREAD = {
+const RESOLVE_THREAD = {
     query: `
 mutation resolveThread($thread: ID!) {
   resolveReviewThread(input: { threadId: $thread }) {
@@ -53,14 +53,14 @@ mutation resolveThread($thread: ID!) {
 }
 
 const pr = async (owner, pr) =>
-    await octokit(PULL_REQUEST_THREAD.query, {
-        ...PULL_REQUEST_THREAD.variables,
+    await octokit(LIST_THREADS.query, {
+        ...LIST_THREADS.variables,
         pr,
         owner,
     }).then(map_pr)
 
 const resolve = async (thread) => {
-    await octokit(RESOLVE_PULL_REQUEST_THREAD.query, { thread })
+    await octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread })
 }
 
 const map_pr = (response) => {
