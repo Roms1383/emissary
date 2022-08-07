@@ -8,14 +8,14 @@ const action = async () => {
     if (event === 'skip') process.exit(0)
 
     const { commits } = event
-    info(
-        `examining ${commits.length} commit${commits.length > 1 ? 's' : ''}...`
-    )
+    const total = {}
+    total.commits = commits.length
+    total.matches = 0
     for (commit of commits) {
         const sha = commit.id
         const matches = utils.matches(commit.message)
         if (matches && commit.distinct) {
-            info(`found distinct commit matching... (${sha})`)
+            total.matches++
             const { data: prs } = await utils.core.pr(sha)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
@@ -39,7 +39,9 @@ const action = async () => {
                                         repo,
                                         pr.number,
                                         searched,
-                                        `@${commit.author?.name} marked it as done in ${sha}`
+                                        matches.extra
+                                            ? `@${commit.author?.name} ${matches.act} it in ${sha}\n${matches.extra}`
+                                            : `@${commit.author?.name} ${matches.act} it in ${sha}`
                                     )
                                     if (matches.act === 'resolve')
                                         await utils.graphql.resolve(thread.id)
@@ -59,6 +61,9 @@ const action = async () => {
             }
         }
     }
+    info(
+        `push event contains ${total.commits} commit(s), ${total.matches} match(es)`
+    )
     info('finished')
 }
 
