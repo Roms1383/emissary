@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { info, warning, error } = require('@actions/core')
+const { info, warning, error, setFailed } = require('@actions/core')
 const utils = require('./utils')
 const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
@@ -33,6 +33,9 @@ const action = async () => {
                                 const searched = comment.url
                                     .split('#')[1]
                                     .substr('discussion_r'.length)
+                                info(
+                                    `comparing ${searched} with ${matches.discussion}...`
+                                )
                                 if (searched === matches.discussion) {
                                     info(
                                         `${matches.act} discussion ${searched} in thread ${thread.id} in PR ${pr.number}`
@@ -83,6 +86,9 @@ const action = async () => {
     info('finished')
 }
 
-action().catch(error)
+action().catch((e) => {
+    error(e)
+    setFailed(e)
+})
 
 module.exports = action
