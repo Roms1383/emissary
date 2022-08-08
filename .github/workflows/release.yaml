@@ -1,10 +1,7 @@
 name: Release
 on:
-  workflow_run:
-    workflows: [CI]
-    branches: [main]
-    types: 
-      - completed
+  release:
+    types: [published, edited]
 
 jobs:
   tag:
@@ -16,17 +13,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ github.event.release.tag_name }}
       - name: setup NodeJS
         uses: actions/setup-node@v2
         with:
           node-version-file: '.nvmrc'
 
-      - name: Automatically tag next version
-        uses: paulhatch/semantic-version@v5.0.0-alpha2
-        with:
-          tag_prefix: "v"
-          major_pattern: "(MAJOR)"
-          minor_pattern: "(MINOR)"
-          bump_each_commit: false
-          search_commit_body: true
-          user_format_type: "csv"
+      - name: build and tag action
+        uses: JasonEtco/build-and-tag-action@v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
