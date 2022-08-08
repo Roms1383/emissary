@@ -37,8 +37,8 @@ jobs:
         run: npm ci
 
       - uses: Roms1383/emissary@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required to act in Github on your behalf
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # required to act in Github on your behalf
 ```
 
 ## usage
