@@ -62,7 +62,6 @@ const map_pr = (response) => {
     const {
         repository: {
             pullRequest: {
-                reviews: {},
                 reviewThreads: {
                     pageInfo: {
                         startCursor: cursor,
