@@ -21,10 +21,12 @@ const handle = async ({ sha, matches }) => {
     const openedPRs = prs.filter(opened)
     let source
     outer: for (pr of openedPRs) {
-        const { previous, threads } = await utils.graphql.pr(
-            pr.base?.repo?.owner?.login,
-            pr.number
-        )
+        const owner = pr.base?.repo?.owner?.login
+        if (!owner) {
+            warning(`owner not found for PR #${pr.number}`)
+            continue
+        }
+        const { previous, threads } = await utils.graphql.pr(owner, pr.number)
         const unresolvedThreads = threads.filter(unresolved)
         for (thread of unresolvedThreads) {
             source = thread.comments.find(same(matches.discussion))
@@ -36,13 +38,7 @@ const handle = async ({ sha, matches }) => {
             matches.act === 'reply' ? 'marked it as done' : 'resolved it'
         let message = `@${commit.author?.name} ${act} in ${sha}`
         if (matches.extra) message = `${message}\n${matches.extra}`
-        await utils.core.reply(
-            pr.base?.repo?.owner?.login,
-            repo,
-            pr.number,
-            source,
-            message
-        )
+        await utils.core.reply(owner, repo, pr.number, source, message)
         if (matches.act === 'resolve') {
             await utils.graphql.resolve(thread.id)
         }
