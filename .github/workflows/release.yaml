@@ -1,0 +1,30 @@
+name: Release
+on:
+  push:
+    branches:    
+      - main
+
+jobs:
+  tag:
+    name: Semantic versioning
+    runs-on: ubuntu-latest
+    needs: action
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+      - name: setup NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Automatically tag next version
+        uses: paulhatch/semantic-version@v4.0.2
+        with:
+          tag_prefix: "v"
+          major_pattern: "(MAJOR)"
+          minor_pattern: "(MINOR)"
+          change_path: "src"
+          namespace: emissary
+          bump_each_commit: false
+          search_commit_body: true
+          user_format_type: "csv"
