@@ -17,7 +17,6 @@ const resolutions = ({ matches }) => matches.act === 'resolve'
 
 const handle = async ({ sha, matches }) => {
     const { data: prs } = await utils.core.pr(sha)
-    debug(`utils.core.pr:\n${JSON.stringify(prs, null, 2)}\n\n`)
 
     const openedPRs = (prs || []).filter(opened)
     let source
@@ -25,13 +24,6 @@ const handle = async ({ sha, matches }) => {
         const { previous, threads } = await utils.graphql.pr(
             pr.base?.repo?.owner?.login,
             pr.number
-        )
-        debug(
-            `utils.graphql.pr[threads]:\n${JSON.stringify(
-                threads,
-                null,
-                2
-            )}\n\n`
         )
         const unresolvedThreads = (threads || []).filter(unresolved)
         for (thread of unresolvedThreads) {
@@ -55,6 +47,8 @@ const handle = async ({ sha, matches }) => {
             await utils.graphql.resolve(thread.id)
         }
         return true
+    } else {
+        warning('TODO: pagination')
     }
     return false
 }
