@@ -10,18 +10,12 @@ const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
 const LIST_THREADS = {
     query: `
-query pullRequestThread($owner: String!, $repo: String!, $pr: Int!, $reviewsBefore: String) {
+query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
-      reviewDecision,
-      reviews(last: 3, before: $reviewsBefore) {
-        pageInfo { endCursor, hasNextPage },
-        totalCount,
-        nodes { id, body }
-      }
-      reviewThreads(last: 10) {
-        pageInfo { endCursor, hasNextPage },
+      reviewThreads(last: 50) {
+        pageInfo { startCursor, hasPreviousPage },
         totalCount,
         nodes {
           id,
@@ -29,8 +23,8 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!, $reviewsBefo
           viewerCanReply,
           viewerCanResolve,
           path,
-          comments(last: 10) {
-            pageInfo { endCursor, hasNextPage },
+          comments(last: 50) {
+            pageInfo { startCursor, hasPreviousPage },
             totalCount,
             nodes { author { login }, bodyText, state, path, id, url }
           }
@@ -68,28 +62,23 @@ const map_pr = (response) => {
     const {
         repository: {
             pullRequest: {
-                reviews: {
-                    // pageInfo: { endCursor: cursor, hasNextPage: next },
-                    // totalCount: total,
-                    nodes: reviews,
-                },
                 reviewThreads: {
-                    pageInfo: { endCursor: cursor, hasNextPage: next },
+                    pageInfo: {
+                        startCursor: cursor,
+                        hasPreviousPage: previous,
+                    },
                     totalCount: total,
                     nodes: threads,
                 },
-                reviewDecision: decision,
                 id,
             },
         },
     } = response
     return {
         cursor,
-        next,
+        previous,
         total,
         threads: threads.map(map_thread),
-        decision,
-        reviews,
         id,
     }
 }
@@ -102,7 +91,7 @@ const map_thread = (thread) => {
         viewerCanResolve: canResolve,
         path,
         comments: {
-            pageInfo: { endCursor: cursor, hasNextPage: next },
+            pageInfo: { startCursor: cursor, hasPreviousPage: previous },
             totalCount: total,
             nodes: comments,
         },
@@ -114,7 +103,7 @@ const map_thread = (thread) => {
         canResolve,
         path,
         cursor,
-        next,
+        previous,
         total,
         comments: comments.map(map_comment),
     }

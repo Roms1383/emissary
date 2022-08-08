@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { info, warning, error, setFailed } = require('@actions/core')
+const { info, warning, debug, setFailed } = require('@actions/core')
 const utils = require('./utils')
 const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
@@ -23,11 +23,10 @@ const action = async () => {
             debug(`utils.core.pr:\n${JSON.stringify(prs, null, 2)}\n\n`)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
-                    const { next, threads, decision, reviews } =
-                        await utils.graphql.pr(
-                            pr.base?.repo?.owner?.login,
-                            pr.number
-                        )
+                    const { previous, threads } = await utils.graphql.pr(
+                        pr.base?.repo?.owner?.login,
+                        pr.number
+                    )
                     debug(
                         `utils.graphql.pr[threads]:\n${JSON.stringify(
                             threads,
@@ -70,14 +69,14 @@ const action = async () => {
                                     }
                                 }
                                 warning('TODO: pagination')
-                                if (comment.next) {
+                                if (comment.previous) {
                                     warning('there are more comments')
                                 }
                             }
                         }
                     }
                     warning('TODO: pagination')
-                    if (next) {
+                    if (previous) {
                         warning('there are more threads')
                     }
                 }
@@ -94,6 +93,6 @@ const action = async () => {
     info('finished')
 }
 
-action().catch(error)
+action().catch(setFailed)
 
 module.exports = action
