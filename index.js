@@ -1,50 +1,70 @@
 require('dotenv').config()
-const { info, warning, debug, setFailed } = require('@actions/core')
+const { info, warning, setFailed, debug } = require('@actions/core')
 const utils = require('./utils')
 const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
 const matching = (kept, commit) => {
     const sha = commit.id
     const matches = utils.matches(commit.message)
-    if (matches && commit.distinct) kept.push({ sha, matches })
+    const contributor = commit.author?.name
+    if (matches && commit.distinct) kept.push({ sha, matches, contributor })
     return kept
 }
 const opened = (pr) => pr.state == 'open' && !pr.locked
 const unresolved = (thread) => !thread.resolved
 const same = (discussion) => (comment) =>
-    comment.url.split('#')[1].substr('discussion_r'.length) === discussion
+    comment.url.split('#')[1].substr('discussion_r'.length) == discussion
 const resolutions = ({ matches }) => matches.act === 'resolve'
 
-const handle = async ({ sha, matches }) => {
-    const { data: prs } = await utils.core.pr(sha)
+const search = async (owner, pr, discussion, from = undefined) => {
+    let found = false
+    let { previous, cursor, threads } = await utils.graphql.pr(
+        owner,
+        pr.number,
+        from
+    )
+    threads = threads.filter(unresolved)
+    for (thread of threads) {
+        found = thread.comments.find(same(discussion))
+        if (found) return found
+    }
+    if (!previous) return false
+    return await search(owner, pr, discussion, cursor)
+}
 
-    const openedPRs = prs.filter(opened)
-    let source
-    outer: for (pr of openedPRs) {
-        const owner = pr.base?.repo?.owner?.login
+const handle = async ({
+    sha,
+    matches: { act, discussion, extra },
+    contributor,
+}) => {
+    let found = false
+    let owner = undefined
+
+    let { data: prs } = await utils.core.pr(sha)
+    prs = prs.filter(opened)
+    outer: for (pr of prs) {
+        owner = pr.base?.repo?.owner?.login
         if (!owner) {
             warning(`owner not found for PR #${pr.number}`)
             continue
         }
-        const { previous, threads } = await utils.graphql.pr(owner, pr.number)
-        const unresolvedThreads = threads.filter(unresolved)
-        for (thread of unresolvedThreads) {
-            source = thread.comments.find(same(matches.discussion))
-            if (source) break outer
-        }
+
+        found = await search(owner, pr, discussion)
+        if (found) break outer
     }
-    if (source) {
-        const act =
-            matches.act === 'reply' ? 'marked it as done' : 'resolved it'
-        let message = `@${commit.author?.name} ${act} in ${sha}`
-        if (matches.extra) message = `${message}\n${matches.extra}`
-        await utils.core.reply(owner, repo, pr.number, source, message)
-        if (matches.act === 'resolve') {
+    if (found) {
+        const action = act === 'reply' ? 'marked it as done' : 'resolved it'
+        let message = `@${contributor ?? 'unknown'} ${action} in ${sha}`
+        if (extra) message = `${message}\n${extra}`
+        if (process.env.DRY_RUN) {
+            warning(`[dry-run] would have sent ${message}`)
+            return true
+        }
+        await utils.core.reply(owner, repo, pr.number, discussion, message)
+        if (act === 'resolve') {
             await utils.graphql.resolve(thread.id)
         }
         return true
-    } else {
-        warning('TODO: pagination')
     }
     return false
 }
