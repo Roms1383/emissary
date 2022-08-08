@@ -18,16 +18,16 @@ const resolutions = ({ matches }) => matches.act === 'resolve'
 const handle = async ({ sha, matches }) => {
     const { data: prs } = await utils.core.pr(sha)
 
-    const openedPRs = (prs || []).filter(opened)
+    const openedPRs = prs.filter(opened)
     let source
     outer: for (pr of openedPRs) {
         const { previous, threads } = await utils.graphql.pr(
             pr.base?.repo?.owner?.login,
             pr.number
         )
-        const unresolvedThreads = (threads || []).filter(unresolved)
+        const unresolvedThreads = threads.filter(unresolved)
         for (thread of unresolvedThreads) {
-            source = (thread.comments || []).find(same(matches.discussion))
+            source = thread.comments.find(same(matches.discussion))
             if (source) break outer
         }
     }
