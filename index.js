@@ -86,9 +86,6 @@ const action = async () => {
     info('finished')
 }
 
-action().catch((e) => {
-    error(e)
-    setFailed(e)
-})
+action().catch(error)
 
 module.exports = action
