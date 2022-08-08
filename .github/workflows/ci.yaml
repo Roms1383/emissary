@@ -39,6 +39,7 @@ jobs:
       - name: install dependencies
         run: npm ci
       - name: run action
-        run: npm start
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ./
+        id: emissary
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

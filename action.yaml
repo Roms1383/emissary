@@ -1,10 +1,9 @@
-name: "Emissary"
+name: Emissary
 description: "Comment on Pull Review Request Changes from Commit"
 runs:
-  using: "docker"
-  image: "Dockerfile"
+  using: node16
+  main: dist/index.js
 inputs:
-  event:
-    description: 'Github Event'
-    required: false
-    default: '${{ github.event }}'
+  token:
+    description: 'Github Token'
+    required: true

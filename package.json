@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "GITHUB_TOKEN='00000' GITHUB_REPOSITORY='Roms1383/emissary' GITHUB_EVENT_PATH='./tests/fixtures/actionTrigger.json' jest",
-    "start": "node index.js"
+    "start": "node index.js",
+    "prepare": "ncc build index.js -o dist --minify"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "dotenv": "^16.0.1"
   },
   "devDependencies": {
+    "@vercel/ncc": "^0.34.0",
     "jest": "^28.1.3",
     "prettier": "2.7.1"
   }
