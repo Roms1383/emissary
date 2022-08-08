@@ -1,6 +1,6 @@
 const { Octokit } = require('@octokit/core')
 const octokit = new Octokit({
-    auth: `${process.env.GITHUB_TOKEN || process.env.token}`,
+    auth: `${process.env.GITHUB_TOKEN || process.env.INPUT_TOKEN}`,
 })
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
