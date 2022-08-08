@@ -12,7 +12,7 @@ const maybe_skip = (event) => {
     if (!created && !deleted && !forced && !disabled && !main) return false
     if (created) {
         console.info(
-            'emissary does not act on a freshly created branch, skipping...'
+            'emissary does not act on a freshly created branch or branch tagging, skipping...'
         )
     }
     if (deleted) {
