@@ -1,7 +1,6 @@
 const fs = require('fs').promises
 
 const core = require('./core')
-const rest = require('./rest')
 const graphql = require('./graphql')
 
 const maybe_skip = (event) => {
@@ -65,6 +64,5 @@ module.exports = {
     eventOrSkip,
     matches,
     core,
-    rest,
     graphql,
 }
