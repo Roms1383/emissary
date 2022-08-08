@@ -39,4 +39,5 @@ jobs:
       - name: install dependencies
         run: npm ci
       - name: run action
-        run: npm start
+        uses: ./
+        id: emissary
