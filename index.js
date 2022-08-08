@@ -23,11 +23,10 @@ const action = async () => {
             debug(`utils.core.pr:\n${JSON.stringify(prs, null, 2)}\n\n`)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
-                    const { next, threads, decision, reviews } =
-                        await utils.graphql.pr(
-                            pr.base?.repo?.owner?.login,
-                            pr.number
-                        )
+                    const { threads } = await utils.graphql.pr(
+                        pr.base?.repo?.owner?.login,
+                        pr.number
+                    )
                     debug(
                         `utils.graphql.pr[threads]:\n${JSON.stringify(
                             threads,
