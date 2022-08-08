@@ -4,6 +4,7 @@ on:
     paths-ignore:
       - 'tests/fixtures/**.json'
       - '**.md'
+      - 'images/'
 
 jobs:
   unit-tests:
