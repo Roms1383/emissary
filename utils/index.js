@@ -6,35 +6,30 @@ const graphql = require('./graphql')
 
 const maybe_skip = (event) => {
     debug(`github.event:\n${JSON.stringify(event, null, 2)}\n\n`)
-    if (
-        !event.created &&
-        !event.deleted &&
-        !event.forced &&
-        !event.repository?.disabled
-    )
-        return false
-    if (event.created) {
+    const { created, deleted, forced, ref } = event
+    const disabled = event.repository?.disabled
+    const main = ref === `refs/heads/${event.repository.master_branch}`
+    if (!created && !deleted && !forced && !disabled && !main) return false
+    if (created) {
         console.info(
             'emissary does not act on a freshly created branch, skipping...'
         )
     }
-    if (event.deleted) {
+    if (deleted) {
         console.info('emissary does not act on a deleted branch, skipping...')
     }
-    if (event.forced) {
+    if (forced) {
         console.info(
             'emissary does not act on force-pushed commit(s), skipping...'
         )
     }
-    if (event.repository?.disabled) {
+    if (disabled) {
         console.info(
             'emissary does not act on disabled repository, skipping...'
         )
     }
-    const main = event.repository.master_branch
-    if (event.ref === `refs/heads/${main}`) {
+    if (main) {
         console.info('emissary does not act on your main branch, skipping...')
-        return
     }
     return true
 }
