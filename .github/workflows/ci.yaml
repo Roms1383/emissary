@@ -3,6 +3,7 @@ on:
   push:
     paths-ignore:
       - 'tests/fixtures/**.json'
+      - '**.md'
     tags-ignore:
       - "*"
 
