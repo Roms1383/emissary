@@ -22,7 +22,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Automatically tag next version
-        uses: paulhatch/semantic-version@v4.0.2
+        uses: paulhatch/semantic-version@v5.0.0-alpha2
         with:
           tag_prefix: "v"
           major_pattern: "(MAJOR)"
