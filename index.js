@@ -20,6 +20,7 @@ const action = async () => {
         if (matches && commit.distinct) {
             total.matches++
             const { data: prs } = await utils.core.pr(sha)
+            debug(`utils.core.pr:\n${JSON.stringify(prs, null, 2)}\n\n`)
             for (pr of prs) {
                 if (pr.state == 'open' && !pr.locked) {
                     const { next, threads, decision, reviews } =
@@ -27,13 +28,20 @@ const action = async () => {
                             pr.base?.repo?.owner?.login,
                             pr.number
                         )
+                    debug(
+                        `utils.graphql.pr[threads]:\n${JSON.stringify(
+                            threads,
+                            null,
+                            2
+                        )}\n\n`
+                    )
                     for (thread of threads) {
                         if (!thread.resolved) {
                             for (comment of thread.comments) {
                                 const searched = comment.url
                                     .split('#')[1]
                                     .substr('discussion_r'.length)
-                                info(
+                                debug(
                                     `comparing ${searched} with ${matches.discussion}...`
                                 )
                                 if (searched === matches.discussion) {

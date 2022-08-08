@@ -1,9 +1,11 @@
 const fs = require('fs').promises
 
+const { debug } = require('@actions/core')
 const core = require('./core')
 const graphql = require('./graphql')
 
 const maybe_skip = (event) => {
+    debug(`github.event:\n${JSON.stringify(event, null, 2)}\n\n`)
     if (
         !event.created &&
         !event.deleted &&
