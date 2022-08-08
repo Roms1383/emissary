@@ -40,7 +40,7 @@ const handle = async ({ sha, matches }) => {
             pr.base?.repo?.owner?.login,
             repo,
             pr.number,
-            searched,
+            source,
             message
         )
         if (matches.act === 'resolve') {
