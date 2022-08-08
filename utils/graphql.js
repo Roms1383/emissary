@@ -1,7 +1,7 @@
 const { graphql } = require('@octokit/graphql')
 const octokit = graphql.defaults({
     headers: {
-        authorization: `token ${process.env.GITHUB_TOKEN}`,
+        authorization: `token ${process.env.GITHUB_TOKEN || process.env.token}`,
     },
 })
 const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')

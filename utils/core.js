@@ -1,5 +1,7 @@
 const { Octokit } = require('@octokit/core')
-const octokit = new Octokit({ auth: `${process.env.GITHUB_TOKEN}` })
+const octokit = new Octokit({
+    auth: `${process.env.GITHUB_TOKEN || process.env.token}`,
+})
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
 const pr = async (commit_sha) =>

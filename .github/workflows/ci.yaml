@@ -41,3 +41,5 @@ jobs:
       - name: run action
         uses: ./
         id: emissary
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

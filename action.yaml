@@ -3,3 +3,7 @@ description: "Comment on Pull Review Request Changes from Commit"
 runs:
   using: node16
   main: dist/index.js
+inputs:
+  token:
+    description: 'Github Token'
+    required: true
