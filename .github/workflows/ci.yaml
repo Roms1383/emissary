@@ -3,6 +3,8 @@ on:
   push:
     paths-ignore:
       - 'tests/fixtures/**.json'
+    tags-ignore:
+      - "*"
 
 jobs:
   unit-tests:
