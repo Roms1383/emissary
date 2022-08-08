@@ -27,7 +27,6 @@ jobs:
           tag_prefix: "v"
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
-          namespace: emissary
           bump_each_commit: false
           search_commit_body: true
           user_format_type: "csv"
