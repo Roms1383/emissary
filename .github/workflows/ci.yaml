@@ -27,6 +27,12 @@ jobs:
     name: Reply to PR review from Commit
     runs-on: ubuntu-latest
     needs: unit-tests
+    if: |
+      github.event.ref != format('refs/heads/{0}', github.event.repository.master_branch) &&
+      !github.event.created &&
+      !github.event.deleted &&
+      !github.event.forced &&
+      github.event.repository && !github.event.repository.disabled
 
     steps:
       - name: checkout repository
