@@ -1,4 +1,4 @@
-const utils = require('../utils')
+const utils = require('../lib/utils')
 
 describe('comment', () => {
     describe('should return false if commit does NOT include a comment', () => {

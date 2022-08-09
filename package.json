@@ -1,12 +1,13 @@
 {
   "name": "emissary",
-  "version": "0.5.0-rc1",
+  "version": "0.7.0-rc1",
   "description": "A simple Github Action to comment on pull request discussions from commits messages",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "GITHUB_TOKEN='00000' GITHUB_REPOSITORY='Roms1383/emissary' jest --coverage",
-    "start": "node index.js",
-    "prepare": "ncc build index.js -o dist --minify"
+    "start": "node dist/index.js",
+    "prestart": "npm run prepare",
+    "prepare": "ncc build lib/index.js -o dist --minify"
   },
   "repository": {
     "type": "git",
