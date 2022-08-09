@@ -3,7 +3,7 @@ on:
   workflow_run:
     workflows: [CI]
     branches: [main]
-    types: 
+    types:
       - completed
 
 jobs:
@@ -24,9 +24,9 @@ jobs:
       - name: Automatically tag next version
         uses: paulhatch/semantic-version@v5.0.0-alpha2
         with:
-          tag_prefix: "v"
-          major_pattern: "(MAJOR)"
-          minor_pattern: "(MINOR)"
+          tag_prefix: 'v'
+          major_pattern: '(MAJOR)'
+          minor_pattern: '(MINOR)'
           bump_each_commit: false
           search_commit_body: true
-          user_format_type: "csv"
+          user_format_type: 'csv'
