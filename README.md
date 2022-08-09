@@ -74,7 +74,7 @@ jobs:
 
     ![copy discussion number screenshot](images/copy-discussion-number.png)
 
-    it should looks like, e.g. `https://github.com/Roms1383/emissary/pull/1#discussion_r937716034` where `937716034` is the discussion number.
+    it should looks like, e.g. `https://github.com/Roms1383/emissary/pull/1#discussion_r937716034` where `937716034` is the discussion number: either full url or its discussion number are supported in the commit message.
 
 1. on the Github Action successful completion you should now see in your PR:
 
