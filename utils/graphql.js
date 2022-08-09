@@ -1,3 +1,4 @@
+const { debug } = require('@actions/core')
 const { graphql } = require('@octokit/graphql')
 const octokit = graphql.defaults({
     headers: {
@@ -10,7 +11,7 @@ const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
 
 const LIST_THREADS = {
     query: `
-query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
+query pullRequestThread($owner: String!, $repo: String!, $pr: Int!, $cursor: String) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
@@ -23,7 +24,7 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
           viewerCanReply,
           viewerCanResolve,
           path,
-          comments(last: 50) {
+          comments(last: 50, before: $cursor) {
             pageInfo { startCursor, hasPreviousPage },
             totalCount,
             nodes { author { login }, bodyText, state, path, id, url }
@@ -37,6 +38,27 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
     variables: { repo },
 }
 
+const pr = async (owner, pr, cursor = undefined) => {
+    const parameters = cursor
+        ? {
+              ...LIST_THREADS.variables,
+              pr,
+              owner,
+              cursor,
+          }
+        : {
+              ...LIST_THREADS.variables,
+              pr,
+              owner,
+          }
+    return octokit(LIST_THREADS.query, parameters)
+        .then(map_pr)
+        .then((v) => {
+            debug(`utils.graphql.pr:\n${JSON.stringify(v, null, 2)}\n\n`)
+            return v
+        })
+}
+
 const RESOLVE_THREAD = {
     query: `
 mutation resolveThread($thread: ID!) {
@@ -48,17 +70,15 @@ mutation resolveThread($thread: ID!) {
     variables: {},
 }
 
-const pr = async (owner, pr) =>
-    octokit(LIST_THREADS.query, {
-        ...LIST_THREADS.variables,
-        pr,
-        owner,
-    }).then(map_pr)
-
 const resolve = async (thread) =>
-    octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread })
+    octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread }).then(
+        (v) => {
+            debug(`utils.graphql.resolve:\n${JSON.stringify(v, null, 2)}\n\n`)
+            return v
+        }
+    )
 
-const map_pr = (response) => {
+const map_pr = (pr) => {
     const {
         repository: {
             pullRequest: {
@@ -73,12 +93,12 @@ const map_pr = (response) => {
                 id,
             },
         },
-    } = response
+    } = pr
     return {
         cursor,
         previous,
         total,
-        threads: threads.map(map_thread),
+        threads: (threads || []).map(map_thread),
         id,
     }
 }
@@ -105,7 +125,7 @@ const map_thread = (thread) => {
         cursor,
         previous,
         total,
-        comments: comments.map(map_comment),
+        comments: (comments || []).map(map_comment),
     }
 }
 
