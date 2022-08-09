@@ -1,6 +1,6 @@
 {
   "name": "emissary",
-  "version": "0.7.0-rc3",
+  "version": "0.7.0-rc4",
   "description": "A simple Github Action to comment on pull request discussions from commits messages",
   "main": "dist/index.js",
   "scripts": {
