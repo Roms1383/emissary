@@ -40,26 +40,52 @@ const eventOrSkip = async () =>
         .then(JSON.parse)
         .then((event) => (maybe_skip(event) ? 'skip' : event))
 
+const extract = (url) =>
+    url.indexOf('#') !== -1
+        ? url.split('#')[1].substr('discussion_r'.length)
+        : url
+
 const matches = (ref) => {
-    let found = ref.match(
-        /(reply|replies|replied|resolve|resolves|resolved) +(discussion|discussion_r)(\-|\_| +)?([0-9]{9,})(.*)/im
+    const lines = ref.split(/\n+/m).map((line) => line.trim())
+    const which = lines.findIndex((line) =>
+        line.match(/(reply|replies|replied|resolve|resolves|resolved).+/i)
     )
-    return found
-        ? {
-              act: ['reply', 'replies', 'replied'].includes(
-                  found[1].toLowerCase()
-              )
-                  ? 'reply'
-                  : 'resolve',
-              discussion: found[4],
-              extra: found[5].trim(),
-          }
-        : false
+    if (which === -1) return false
+    const sentence = lines[which]
+    let words = sentence.split(/[ ]+/)
+    const [act] = words.splice(0, 1)
+    if (
+        ['discussion', 'discussions', 'conversation', 'conversations'].includes(
+            words[0]
+        )
+    )
+        words.splice(0, 1)
+    const discussion = words
+        .filter((word) =>
+            word.match(
+                /(https\:\/\/github\.com\/.+\/.+\/pull\/discussion\_r)?([0-9]{9,})/
+            )
+        )
+        .map(extract)
+    if (discussion.length === 0) return false
+    const lastDiscussion = discussion[discussion.length - 1]
+    const extra = sentence
+        .substr(sentence.indexOf(lastDiscussion) + lastDiscussion.length)
+        .trim()
+
+    return {
+        act: ['reply', 'replies', 'replied'].includes(act)
+            ? 'reply'
+            : 'resolve',
+        discussion,
+        extra,
+    }
 }
 
 module.exports = {
     eventOrSkip,
     matches,
+    extract,
     core,
     graphql,
 }

@@ -13,7 +13,7 @@ const matching = (kept, commit) => {
 const opened = (pr) => pr.state == 'open' && !pr.locked
 const unresolved = (thread) => !thread.resolved
 const same = (discussion) => (comment) =>
-    comment.url.split('#')[1].substr('discussion_r'.length) == discussion
+    utils.extract(comment.url) == discussion
 const resolutions = ({ matches }) => matches.act === 'resolve'
 
 const search = async (owner, pr, discussion, from = undefined) => {
