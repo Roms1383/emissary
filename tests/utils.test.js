@@ -74,5 +74,14 @@ describe('comment', () => {
       expect(discussion).toStrictEqual(['937716034', '940389955'])
       expect(extra).toBe('')
     })
+
+    it('with keyword in unrelated line', async () => {
+      let message =
+        ':bug: fix parameter order\n\nlet\'s try to reply to "three" comment\n\nreply discussion https://github.com/Roms1383/emissary/pull/15#discussion_r942010360'
+      const { act, discussion, extra } = utils.matches(message)
+      expect(act).toBe('reply')
+      expect(discussion).toStrictEqual(['942010360'])
+      expect(extra).toBe('')
+    })
   })
 })
