@@ -12,6 +12,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.release.tag_name }}
+      - id: get-raw-version
+        run: |
+          version=$(echo ${{github.event.release.tag_name}} | cut -c 3-)
+          echo "::set-output name=version::$version"
+      - run: echo "${{steps.get-id.outputs.id}}"
       - name: setup NodeJS
         uses: actions/setup-node@v2
         with:
@@ -22,3 +27,5 @@ jobs:
       - uses: JasonEtco/build-and-tag-action@v2
         env:
           GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: "${{steps.get-raw-version.outputs.version}}"
