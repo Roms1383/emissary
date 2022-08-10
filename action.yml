@@ -1,5 +1,8 @@
 name: 'Emissary'
 description: 'Comment on Pull Review Request Changes from Commit'
+branding:
+  icon: check-square
+  color: green
 runs:
   using: node16
   main: dist/index.js
