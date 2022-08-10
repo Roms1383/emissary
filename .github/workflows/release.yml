@@ -30,3 +30,4 @@ jobs:
           bump_each_commit: false
           search_commit_body: true
           user_format_type: 'csv'
+          format: "v${major}.${minor}.${patch}"
