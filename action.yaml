@@ -1,0 +1,14 @@
+# this duplicate declaration should be removed as soon as action can be published to Github Marketplace
+# with `action.yml` extension
+name: 'emissary-action'
+description: 'Comment on Pull Request Review Requesting Changes from Commit'
+branding:
+  icon: check-square
+  color: green
+runs:
+  using: node16
+  main: dist/index.js
+inputs:
+  token:
+    description: 'Github Token'
+    required: true
