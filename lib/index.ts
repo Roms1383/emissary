@@ -7,15 +7,15 @@ require('dotenv').config()
 const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
 interface EmissaryMatchingCommit {
-  matches: utils.EmissaryMatch
-  contributor?: string
-  sha: string
+  readonly matches: utils.EmissaryMatch
+  readonly contributor?: string
+  readonly sha: string
 }
 
 interface EmissarySingleMatchingCommit {
-  matches: utils.EmissarySingleMatch
-  contributor?: string
-  sha: string
+  readonly matches: utils.EmissarySingleMatch
+  readonly contributor?: string
+  readonly sha: string
 }
 
 const matching = (
