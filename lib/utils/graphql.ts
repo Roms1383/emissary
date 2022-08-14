@@ -150,7 +150,7 @@ interface EmissaryPullRequest {
   readonly id: string
 }
 
-const resolve = async (thread: any) =>
+const resolve = async (thread: string) =>
   octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread }).then(
     (v: any) => {
       debug(`utils.graphql.resolve:\n${JSON.stringify(v, null, 2)}\n\n`)

@@ -28,17 +28,20 @@ const matching = (
   if (matches && commit.distinct) kept.push({ sha, matches, contributor })
   return kept
 }
-const opened = (pr: any) => pr.state == 'open' && !pr.locked
-const unresolved = (thread: any) => !thread.resolved
-const same = (discussion: any) => (comment: any) =>
-  utils.extract(comment.url) == discussion &&
-  comment.state.toLowerCase() === 'submitted'
-const resolutions = ({ matches }: any) => matches.act === 'resolve'
+const opened = (pr: { state: string; locked: boolean }) =>
+  pr.state == 'open' && !pr.locked
+const unresolved = (thread: { resolved: boolean }) => !thread.resolved
+const same =
+  (discussion: string) => (comment: { url: string; state: string }) =>
+    utils.extract(comment.url) == discussion &&
+    comment.state.toLowerCase() === 'submitted'
+const resolutions = ({ matches }: EmissaryMatchingCommit) =>
+  matches.act === 'resolve'
 
 const search = async (
-  owner: any,
-  pr: any,
-  discussion: any
+  owner: string,
+  pr: { number: number },
+  discussion: string
 ): Promise<EmissaryComment | false> => {
   let found: EmissaryComment | false = false
   let { threads } = await utils.graphql.pr(owner, pr.number)
