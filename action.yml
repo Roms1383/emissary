@@ -10,3 +10,7 @@ inputs:
   token:
     description: 'Github Token'
     required: true
+  dryrun:
+    description: 'Execute action without replying or resolving any pull request review thread'
+    default: 'false'
+    required: false

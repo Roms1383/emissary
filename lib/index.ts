@@ -75,7 +75,7 @@ const handle = async ({
     const action = act === 'reply' ? 'marked it as done' : 'resolved it'
     let message = `@${contributor ?? 'unknown'} ${action} in ${sha}`
     if (extra) message = `${message}\n${extra}`
-    if (process.env.DRY_RUN) {
+    if (process.env.DRYRUN || process.env.INPUT_DRYRUN === 'true') {
       warning(`[dry-run] would have sent ${message}`)
       return true
     }
