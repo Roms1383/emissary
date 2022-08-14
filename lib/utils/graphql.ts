@@ -122,32 +122,32 @@ interface ListPullRequestReviewThreadsResponse {
 }
 
 interface EmissaryComment {
-  message: string
-  state: 'submitted' | 'pending'
-  path: string
-  interlocutor?: string
-  url: string
-  id: string
+  readonly message: string
+  readonly state: 'submitted' | 'pending'
+  readonly path: string
+  readonly interlocutor?: string
+  readonly url: string
+  readonly id: string
 }
 
 interface EmissaryReviewThread {
-  id: string
-  resolved: boolean
-  canReply: boolean
-  canResolve: boolean
-  path: string
-  cursor: string
-  next: boolean
-  total: number
-  comments: EmissaryComment[]
+  readonly id: string
+  readonly resolved: boolean
+  readonly canReply: boolean
+  readonly canResolve: boolean
+  readonly path: string
+  readonly cursor: string
+  readonly next: boolean
+  readonly total: number
+  readonly comments: EmissaryComment[]
 }
 
 interface EmissaryPullRequest {
-  cursor: string
-  previous: boolean
-  total: number
-  threads: EmissaryReviewThread[]
-  id: string
+  readonly cursor: string
+  readonly previous: boolean
+  readonly total: number
+  readonly threads: EmissaryReviewThread[]
+  readonly id: string
 }
 
 const resolve = async (thread: any) =>
