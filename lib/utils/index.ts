@@ -1,14 +1,39 @@
-const fs = require('fs').promises
+import { debug } from '@actions/core'
+import fs from 'fs/promises'
 
-const { debug } = require('@actions/core')
-const core = require('./core')
-const graphql = require('./graphql')
+import * as core from './core'
+import * as graphql from './graphql'
 
-const maybe_skip = (event) => {
+interface GithubRepository {
+  readonly disabled: boolean
+  readonly master_branch: string
+}
+
+interface GithubEvent {
+  readonly created: boolean
+  readonly deleted: boolean
+  readonly forced: boolean
+  readonly ref: string
+  readonly repository?: GithubRepository
+  readonly commits: GithubCommit[]
+}
+
+interface GithubAuthor {
+  readonly name: string
+}
+
+interface GithubCommit {
+  readonly id: string
+  readonly message: string
+  readonly author?: GithubAuthor
+  readonly distinct: boolean
+}
+
+const maybe_skip = (event: GithubEvent) => {
   debug(`github.event:\n${JSON.stringify(event, null, 2)}\n\n`)
   const { created, deleted, forced, ref } = event
   const disabled = event.repository?.disabled
-  const main = ref === `refs/heads/${event.repository.master_branch}`
+  const main = ref === `refs/heads/${event.repository?.master_branch}`
   if (!created && !deleted && !forced && !disabled && !main) return false
   if (created) {
     console.info(
@@ -30,20 +55,32 @@ const maybe_skip = (event) => {
   return true
 }
 
-const eventOrSkip = async () =>
+const eventOrSkip = async (): Promise<GithubEvent | 'skip'> =>
   fs
     .readFile(`${process.env.GITHUB_EVENT_PATH}`, 'utf8')
     .then(JSON.parse)
-    .then((event) => (maybe_skip(event) ? 'skip' : event))
+    .then((event: GithubEvent) => (maybe_skip(event) ? 'skip' : event))
 
-const extract = (url) =>
+const extract = (url: string) =>
   url.indexOf('#') !== -1
-    ? url.split('#')[1].substr('discussion_r'.length)
+    ? url.split('#')[1].substring('discussion_r'.length)
     : url
 
-const matches = (ref) => {
+interface EmissaryMatch {
+  act: 'reply' | 'resolve'
+  discussion: string[]
+  extra: string
+}
+
+interface EmissarySingleMatch {
+  act: 'reply' | 'resolve'
+  discussion: string
+  extra: string
+}
+
+const matches = (ref: string): EmissaryMatch | false => {
   const lines = ref.split(/\n+/m).map((line) => line.trim())
-  const potential = lines.reduce((found, line, idx) => {
+  const potential = lines.reduce((found: number[], line, idx) => {
     if (line.match(/(reply|replies|replied|resolve|resolves|resolved).+/i))
       found.push(idx)
     return found
@@ -69,7 +106,7 @@ const matches = (ref) => {
     if (discussion.length === 0) continue
     const lastDiscussion = discussion[discussion.length - 1]
     const extra = sentence
-      .substr(sentence.indexOf(lastDiscussion) + lastDiscussion.length)
+      .substring(sentence.indexOf(lastDiscussion) + lastDiscussion.length)
       .trim()
 
     return {
@@ -81,10 +118,16 @@ const matches = (ref) => {
   return false
 }
 
-module.exports = {
+export {
   eventOrSkip,
   matches,
   extract,
   core,
   graphql,
+  EmissaryMatch,
+  EmissarySingleMatch,
+  GithubAuthor,
+  GithubCommit,
+  GithubEvent,
+  GithubRepository,
 }

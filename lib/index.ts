@@ -1,28 +1,50 @@
-require('dotenv').config()
-const { info, warning, setFailed, debug } = require('@actions/core')
-const utils = require('./utils')
-const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
+import { info, setFailed, warning } from '@actions/core'
 
-const matching = (kept, commit) => {
+import * as utils from './utils'
+import { EmissaryComment } from './utils/graphql'
+
+require('dotenv').config()
+const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
+
+interface EmissaryMatchingCommit {
+  matches: utils.EmissaryMatch
+  contributor?: string
+  sha: string
+}
+
+interface EmissarySingleMatchingCommit {
+  matches: utils.EmissarySingleMatch
+  contributor?: string
+  sha: string
+}
+
+const matching = (
+  kept: EmissaryMatchingCommit[],
+  commit: utils.GithubCommit
+): EmissaryMatchingCommit[] => {
   const sha = commit.id
   const matches = utils.matches(commit.message)
   const contributor = commit.author?.name
   if (matches && commit.distinct) kept.push({ sha, matches, contributor })
   return kept
 }
-const opened = (pr) => pr.state == 'open' && !pr.locked
-const unresolved = (thread) => !thread.resolved
-const same = (discussion) => (comment) =>
+const opened = (pr: any) => pr.state == 'open' && !pr.locked
+const unresolved = (thread: any) => !thread.resolved
+const same = (discussion: any) => (comment: any) =>
   utils.extract(comment.url) == discussion &&
   comment.state.toLowerCase() === 'submitted'
-const resolutions = ({ matches }) => matches.act === 'resolve'
+const resolutions = ({ matches }: any) => matches.act === 'resolve'
 
-const search = async (owner, pr, discussion) => {
-  let found = false
+const search = async (
+  owner: any,
+  pr: any,
+  discussion: any
+): Promise<EmissaryComment | false> => {
+  let found: EmissaryComment | false = false
   let { threads } = await utils.graphql.pr(owner, pr.number)
   threads = threads.filter(unresolved)
-  for (thread of threads) {
-    found = thread.comments.find(same(discussion))
+  for (const thread of threads) {
+    found = thread.comments.find(same(discussion)) || false
     if (found) return found
   }
   return await search(owner, pr, discussion)
@@ -32,9 +54,10 @@ const handle = async ({
   sha,
   matches: { act, discussion, extra },
   contributor,
-}) => {
-  let found = false
-  let owner = undefined
+}: EmissarySingleMatchingCommit) => {
+  let found: false | object = false
+  let owner: string | undefined = undefined
+  let pr = undefined
 
   let { data: prs } = await utils.core.pr(sha)
   prs = prs.filter(opened)
@@ -56,9 +79,15 @@ const handle = async ({
       warning(`[dry-run] would have sent ${message}`)
       return true
     }
-    await utils.core.reply(owner, repo, pr.number, discussion, message)
+    await utils.core.reply(
+      owner!,
+      repo,
+      pr!.number,
+      parseInt(discussion),
+      message
+    )
     if (act === 'resolve') {
-      await utils.graphql.resolve(thread.id)
+      await utils.graphql.resolve(discussion)
     }
     return true
   }
@@ -72,7 +101,7 @@ const action = async () => {
   const { commits } = event
   let success = []
   const kept = commits.reduce(matching, [])
-  for (commit of kept) {
+  for (const commit of kept) {
     for (const discussion of commit.matches.discussion) {
       if (
         await handle({ ...commit, matches: { ...commit.matches, discussion } })
