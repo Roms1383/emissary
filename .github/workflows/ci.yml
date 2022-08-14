@@ -49,3 +49,4 @@ jobs:
         id: emissary
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: 'true'
