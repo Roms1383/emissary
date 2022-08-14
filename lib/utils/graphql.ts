@@ -64,12 +64,85 @@ mutation resolveThread($thread: ID!) {
   variables: {},
 }
 
-interface Author {
+const resolve = async (thread: string) =>
+  octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread }).then(
+    (v: any) => {
+      debug(`utils.graphql.resolve:\n${JSON.stringify(v, null, 2)}\n\n`)
+      return v
+    }
+  )
+
+const map_pr = (response: unknown): EmissaryPullRequest => {
+  const {
+    repository: {
+      pullRequest: {
+        reviewThreads: {
+          pageInfo: { startCursor: cursor, hasPreviousPage: previous },
+          totalCount: total,
+          nodes: threads,
+        },
+        id,
+      },
+    },
+  } = response as ListPullRequestReviewThreadsResponse
+  return {
+    cursor,
+    previous,
+    total,
+    threads: (threads || []).map(map_thread),
+    id,
+  }
+}
+
+const map_thread = (
+  thread: GithubPullRequestReviewThread
+): EmissaryReviewThread => {
+  const {
+    id,
+    isResolved: resolved,
+    viewerCanReply: canReply,
+    viewerCanResolve: canResolve,
+    path,
+    comments: {
+      pageInfo: { endCursor: cursor, hasNextPage: next },
+      totalCount: total,
+      nodes: comments,
+    },
+  } = thread
+  return {
+    id,
+    resolved,
+    canReply,
+    canResolve,
+    path,
+    cursor,
+    next,
+    total,
+    comments: (comments || []).map(map_comment),
+  }
+}
+
+const map_comment = (
+  comment: GithubPullRequestReviewThreadComment
+): EmissaryComment => {
+  const interlocutor = comment.author?.login
+  const { bodyText: message, state, path, url, id } = comment
+  return {
+    message,
+    state,
+    path,
+    interlocutor,
+    url,
+    id,
+  }
+}
+
+interface GithubLogin {
   readonly login: string
 }
 
 interface GithubPullRequestReviewThreadComment {
-  readonly author?: Author
+  readonly author?: GithubLogin
   readonly bodyText: string
   readonly state: 'submitted' | 'pending'
   readonly path: string
@@ -148,79 +221,6 @@ interface EmissaryPullRequest {
   readonly total: number
   readonly threads: EmissaryReviewThread[]
   readonly id: string
-}
-
-const resolve = async (thread: string) =>
-  octokit(RESOLVE_THREAD.query, { ...RESOLVE_THREAD.variables, thread }).then(
-    (v: any) => {
-      debug(`utils.graphql.resolve:\n${JSON.stringify(v, null, 2)}\n\n`)
-      return v
-    }
-  )
-
-const map_pr = (response: unknown): EmissaryPullRequest => {
-  const {
-    repository: {
-      pullRequest: {
-        reviewThreads: {
-          pageInfo: { startCursor: cursor, hasPreviousPage: previous },
-          totalCount: total,
-          nodes: threads,
-        },
-        id,
-      },
-    },
-  } = response as ListPullRequestReviewThreadsResponse
-  return {
-    cursor,
-    previous,
-    total,
-    threads: (threads || []).map(map_thread),
-    id,
-  }
-}
-
-const map_thread = (
-  thread: GithubPullRequestReviewThread
-): EmissaryReviewThread => {
-  const {
-    id,
-    isResolved: resolved,
-    viewerCanReply: canReply,
-    viewerCanResolve: canResolve,
-    path,
-    comments: {
-      pageInfo: { endCursor: cursor, hasNextPage: next },
-      totalCount: total,
-      nodes: comments,
-    },
-  } = thread
-  return {
-    id,
-    resolved,
-    canReply,
-    canResolve,
-    path,
-    cursor,
-    next,
-    total,
-    comments: (comments || []).map(map_comment),
-  }
-}
-
-const map_comment = (
-  comment: GithubPullRequestReviewThreadComment
-): EmissaryComment => {
-  const interlocutor = comment.author?.login
-  const { bodyText: message, state, path, url, id } = comment
-  return {
-    message,
-    state,
-    path,
-    interlocutor,
-    url,
-    id,
-  }
 }
 
 export {

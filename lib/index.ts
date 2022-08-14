@@ -6,18 +6,6 @@ import { EmissaryComment } from './utils/graphql'
 require('dotenv').config()
 const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
-interface EmissaryMatchingCommit {
-  readonly matches: utils.EmissaryMatch
-  readonly contributor?: string
-  readonly sha: string
-}
-
-interface EmissarySingleMatchingCommit {
-  readonly matches: utils.EmissarySingleMatch
-  readonly contributor?: string
-  readonly sha: string
-}
-
 const matching = (
   kept: EmissaryMatchingCommit[],
   commit: utils.GithubCommit
@@ -28,11 +16,11 @@ const matching = (
   if (matches && commit.distinct) kept.push({ sha, matches, contributor })
   return kept
 }
-const opened = (pr: { state: string; locked: boolean }) =>
-  pr.state == 'open' && !pr.locked
-const unresolved = (thread: { resolved: boolean }) => !thread.resolved
+
+const opened = (pr: PullRequestState) => pr.state == 'open' && !pr.locked
+const unresolved = (thread: PullRequestReviewThreadState) => !thread.resolved
 const same =
-  (discussion: string) => (comment: { url: string; state: string }) =>
+  (discussion: string) => (comment: PullRequestReviewThreadCommentState) =>
     utils.extract(comment.url) == discussion &&
     comment.state.toLowerCase() === 'submitted'
 const resolutions = ({ matches }: EmissaryMatchingCommit) =>
@@ -123,6 +111,22 @@ const action = async () => {
     } replied to and ${resolved} directly resolved`
   )
   info('finished')
+}
+
+type PullRequestState = { state: string; locked: boolean }
+type PullRequestReviewThreadState = { resolved: boolean }
+type PullRequestReviewThreadCommentState = { url: string; state: string }
+
+interface EmissaryMatchingCommit {
+  readonly matches: utils.EmissaryMatch
+  readonly contributor?: string
+  readonly sha: string
+}
+
+interface EmissarySingleMatchingCommit {
+  readonly matches: utils.EmissarySingleMatch
+  readonly contributor?: string
+  readonly sha: string
 }
 
 action().catch(setFailed)

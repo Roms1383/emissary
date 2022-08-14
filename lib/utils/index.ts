@@ -4,31 +4,6 @@ import fs from 'fs/promises'
 import * as core from './core'
 import * as graphql from './graphql'
 
-interface GithubRepository {
-  readonly disabled: boolean
-  readonly master_branch: string
-}
-
-interface GithubEvent {
-  readonly created: boolean
-  readonly deleted: boolean
-  readonly forced: boolean
-  readonly ref: string
-  readonly repository?: GithubRepository
-  readonly commits: GithubCommit[]
-}
-
-interface GithubAuthor {
-  readonly name: string
-}
-
-interface GithubCommit {
-  readonly id: string
-  readonly message: string
-  readonly author?: GithubAuthor
-  readonly distinct: boolean
-}
-
 const maybe_skip = (event: GithubEvent) => {
   debug(`github.event:\n${JSON.stringify(event, null, 2)}\n\n`)
   const { created, deleted, forced, ref } = event
@@ -65,18 +40,6 @@ const extract = (url: string) =>
   url.indexOf('#') !== -1
     ? url.split('#')[1].substring('discussion_r'.length)
     : url
-
-interface EmissaryMatch {
-  act: 'reply' | 'resolve'
-  discussion: string[]
-  extra: string
-}
-
-interface EmissarySingleMatch {
-  act: 'reply' | 'resolve'
-  discussion: string
-  extra: string
-}
 
 const matches = (ref: string): EmissaryMatch | false => {
   const lines = ref.split(/\n+/m).map((line) => line.trim())
@@ -116,6 +79,43 @@ const matches = (ref: string): EmissaryMatch | false => {
     }
   }
   return false
+}
+
+interface GithubRepository {
+  readonly disabled: boolean
+  readonly master_branch: string
+}
+
+interface GithubEvent {
+  readonly created: boolean
+  readonly deleted: boolean
+  readonly forced: boolean
+  readonly ref: string
+  readonly repository?: GithubRepository
+  readonly commits: GithubCommit[]
+}
+
+interface GithubAuthor {
+  readonly name: string
+}
+
+interface GithubCommit {
+  readonly id: string
+  readonly message: string
+  readonly author?: GithubAuthor
+  readonly distinct: boolean
+}
+
+interface EmissaryMatch {
+  act: 'reply' | 'resolve'
+  discussion: string[]
+  extra: string
+}
+
+interface EmissarySingleMatch {
+  act: 'reply' | 'resolve'
+  discussion: string
+  extra: string
 }
 
 export {
