@@ -84,7 +84,7 @@ const map_pr = (response: unknown): EmissaryPullRequest => {
         id,
       },
     },
-  } = response as ListPullRequestReviewThreadsResponse
+  } = response as PullRequestThreadResponse
   return {
     cursor,
     previous,
@@ -95,7 +95,7 @@ const map_pr = (response: unknown): EmissaryPullRequest => {
 }
 
 const map_thread = (
-  thread: GithubPullRequestReviewThread
+  thread: PullRequestReviewThread
 ): EmissaryReviewThread => {
   const {
     id,
@@ -123,7 +123,7 @@ const map_thread = (
 }
 
 const map_comment = (
-  comment: GithubPullRequestReviewThreadComment
+  comment: PullRequestReviewComment
 ): EmissaryComment => {
   const interlocutor = comment.author?.login
   const { bodyText: message, state, path, url, id } = comment
@@ -137,28 +137,28 @@ const map_comment = (
   }
 }
 
-enum GithubPullRequestReviewThreadCommentState {
+enum PullRequestReviewCommentState {
   SUBMITTED = 'submitted',
   PENDING = 'pending',
 }
 
-interface GithubLogin {
+interface Actor {
   readonly login: string
 }
 
-interface GithubPullRequestReviewThreadComment {
-  readonly author?: GithubLogin
+interface PullRequestReviewComment {
+  readonly author?: Actor
   readonly bodyText: string
-  readonly state: GithubPullRequestReviewThreadCommentState
+  readonly state: PullRequestReviewCommentState
   readonly path: string
   readonly id: string
   readonly url: string
 }
 
-interface GithubPullRequestReviewThreadComments {
+interface PullRequestReviewCommentConnection {
   readonly pageInfo: ForwardPagination
   readonly totalCount: number
-  readonly nodes: GithubPullRequestReviewThreadComment[]
+  readonly nodes: PullRequestReviewComment[]
 }
 
 interface BackwardPagination {
@@ -171,37 +171,37 @@ interface ForwardPagination {
   readonly hasNextPage: boolean
 }
 
-interface GithubPullRequestReviewThread {
+interface PullRequestReviewThread {
   readonly id: string
   readonly isResolved: boolean
   readonly viewerCanReply: boolean
   readonly viewerCanResolve: boolean
   readonly path: string
-  readonly comments: GithubPullRequestReviewThreadComments
+  readonly comments: PullRequestReviewCommentConnection
 }
 
-interface GithubPullRequestReviewThreads {
+interface PullRequestReviewThreadConnection {
   readonly pageInfo: BackwardPagination
   readonly totalCount: number
-  readonly nodes: GithubPullRequestReviewThread[]
+  readonly nodes: PullRequestReviewThread[]
 }
 
-interface GithubPullRequest {
-  readonly reviewThreads: GithubPullRequestReviewThreads
+interface PullRequest {
+  readonly reviewThreads: PullRequestReviewThreadConnection
   readonly id: string
 }
 
-interface GithubRepository {
-  readonly pullRequest: GithubPullRequest
+interface Repository {
+  readonly pullRequest: PullRequest
 }
 
-interface ListPullRequestReviewThreadsResponse {
-  readonly repository: GithubRepository
+interface PullRequestThreadResponse {
+  readonly repository: Repository
 }
 
 interface EmissaryComment {
   readonly message: string
-  readonly state: GithubPullRequestReviewThreadCommentState
+  readonly state: PullRequestReviewCommentState
   readonly path: string
   readonly interlocutor?: string
   readonly url: string
