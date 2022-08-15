@@ -94,9 +94,7 @@ const map_pr = (response: unknown): EmissaryPullRequest => {
   }
 }
 
-const map_thread = (
-  thread: PullRequestReviewThread
-): EmissaryReviewThread => {
+const map_thread = (thread: PullRequestReviewThread): EmissaryReviewThread => {
   const {
     id,
     isResolved: resolved,
@@ -122,9 +120,7 @@ const map_thread = (
   }
 }
 
-const map_comment = (
-  comment: PullRequestReviewComment
-): EmissaryComment => {
+const map_comment = (comment: PullRequestReviewComment): EmissaryComment => {
   const interlocutor = comment.author?.login
   const { bodyText: message, state, path, url, id } = comment
   return {
@@ -277,4 +273,5 @@ export {
   EmissaryPullRequest,
   EmissaryReviewThread,
   EmissaryComment,
+  PullRequestReviewCommentState,
 }

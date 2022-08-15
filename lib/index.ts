@@ -1,7 +1,7 @@
 import { info, setFailed, warning } from '@actions/core'
 
 import * as utils from './utils'
-import { EmissaryComment } from './utils/graphql'
+import { EmissaryComment, PullRequestReviewCommentState } from './utils/graphql'
 
 require('dotenv').config()
 const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
@@ -22,7 +22,7 @@ const unresolved = (thread: PullRequestReviewThreadState) => !thread.resolved
 const same =
   (discussion: string) => (comment: PullRequestReviewThreadCommentState) =>
     utils.extract(comment.url) == discussion &&
-    comment.state.toLowerCase() === 'submitted'
+    comment.state.toLowerCase() === PullRequestReviewCommentState.SUBMITTED
 const resolutions = ({ matches }: EmissaryMatchingCommit) =>
   matches.act === 'resolve'
 
