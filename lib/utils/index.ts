@@ -73,7 +73,9 @@ const matches = (ref: string): EmissaryMatch | false => {
       .trim()
 
     return {
-      act: ['reply', 'replies', 'replied'].includes(act) ? 'reply' : 'resolve',
+      act: ['reply', 'replies', 'replied'].includes(act)
+        ? Act.REPLY
+        : Act.RESOLVE,
       discussion,
       extra,
     }
@@ -122,14 +124,19 @@ interface Commit {
   readonly distinct: boolean
 }
 
+enum Act {
+  REPLY = 'reply',
+  RESOLVE = 'resolve',
+}
+
 interface EmissaryMatch {
-  act: 'reply' | 'resolve'
+  act: Act
   discussion: string[]
   extra: string
 }
 
 interface EmissarySingleMatch {
-  act: 'reply' | 'resolve'
+  act: Act
   discussion: string
   extra: string
 }
@@ -143,4 +150,5 @@ export {
   EmissaryMatch,
   EmissarySingleMatch,
   Commit,
+  Act,
 }

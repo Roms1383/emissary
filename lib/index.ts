@@ -1,7 +1,7 @@
 import { info, setFailed, warning } from '@actions/core'
 
 import * as utils from './utils'
-import { Commit } from './utils'
+import { Act, Commit } from './utils'
 import { EmissaryComment, PullRequestReviewCommentState } from './utils/graphql'
 
 require('dotenv').config()
@@ -64,7 +64,7 @@ const handle = async ({
     if (found) break outer
   }
   if (found) {
-    const action = act === 'reply' ? 'marked it as done' : 'resolved it'
+    const action = act === Act.REPLY ? 'marked it as done' : 'resolved it'
     let message = `@${contributor ?? 'unknown'} ${action} in ${sha}`
     if (extra) message = `${message}\n${extra}`
     if (process.env.DRYRUN || process.env.INPUT_DRYRUN === 'true') {

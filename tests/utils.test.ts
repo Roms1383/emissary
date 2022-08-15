@@ -27,7 +27,7 @@ describe('comment', () => {
       let message =
         'added initial logic\n\nresolve discussion 937716034\n\nand some other reminder details'
       const { act, discussion, extra } = utils.matches(message) as EmissaryMatch
-      expect(act).toBe('resolve')
+      expect(act).toBe(utils.Act.RESOLVE)
       expect(discussion).toStrictEqual(['937716034'])
       expect(extra).toBe('')
     })
@@ -35,7 +35,7 @@ describe('comment', () => {
       let message =
         'added initial logic\n\nresolve 937716034\n\nand some other reminder details'
       const { act, discussion, extra } = utils.matches(message) as EmissaryMatch
-      expect(act).toBe('resolve')
+      expect(act).toBe(utils.Act.RESOLVE)
       expect(discussion).toStrictEqual(['937716034'])
       expect(extra).toBe('')
     })
@@ -44,7 +44,7 @@ describe('comment', () => {
       let message =
         'added initial logic\n\nresolve 937716034\n\nand some other reminder details'
       const { act, discussion, extra } = utils.matches(message) as EmissaryMatch
-      expect(act).toBe('resolve')
+      expect(act).toBe(utils.Act.RESOLVE)
       expect(discussion).toStrictEqual(['937716034'])
       expect(extra).toBe('')
     })
@@ -53,7 +53,7 @@ describe('comment', () => {
       let message =
         'added initial logic\n\nresolve 937716034 also thanks for your review\n\nand some other reminder details'
       const { act, discussion, extra } = utils.matches(message) as EmissaryMatch
-      expect(act).toBe('resolve')
+      expect(act).toBe(utils.Act.RESOLVE)
       expect(discussion).toStrictEqual(['937716034'])
       expect(extra).toBe('also thanks for your review')
     })
@@ -62,7 +62,7 @@ describe('comment', () => {
       let message =
         'added initial logic\n\nresolve 937716034 940389955\n\nand some other reminder details'
       const { act, discussion, extra } = utils.matches(message) as EmissaryMatch
-      expect(act).toBe('resolve')
+      expect(act).toBe(utils.Act.RESOLVE)
       expect(discussion).toStrictEqual(['937716034', '940389955'])
       expect(extra).toBe('')
     })
@@ -71,7 +71,7 @@ describe('comment', () => {
       let message =
         'added initial logic\n\nresolve https://github.com/Roms1383/emissary/pull/10#discussion_r937716034 https://github.com/Roms1383/emissary/pull/10#discussion_r940389955\n\nand some other reminder details'
       const { act, discussion, extra } = utils.matches(message) as EmissaryMatch
-      expect(act).toBe('resolve')
+      expect(act).toBe(utils.Act.RESOLVE)
       expect(discussion).toStrictEqual(['937716034', '940389955'])
       expect(extra).toBe('')
     })
@@ -80,7 +80,7 @@ describe('comment', () => {
       let message =
         ':bug: fix parameter order\n\nlet\'s try to reply to "three" comment\n\nreply discussion https://github.com/Roms1383/emissary/pull/15#discussion_r942010360'
       const { act, discussion, extra } = utils.matches(message) as EmissaryMatch
-      expect(act).toBe('reply')
+      expect(act).toBe(utils.Act.REPLY)
       expect(discussion).toStrictEqual(['942010360'])
       expect(extra).toBe('')
     })
