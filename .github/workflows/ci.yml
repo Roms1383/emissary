@@ -54,7 +54,7 @@ jobs:
   readme:
     name: Update readme
     runs-on: ubuntu-latest
-    needs: action
+    needs: unit-tests
     if: github.event.ref == format('refs/heads/{0}', github.event.repository.master_branch)
 
     steps:
