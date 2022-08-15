@@ -71,7 +71,7 @@ jobs:
         uses: bitflight-devops/github-action-readme-generator@main
         with:
           action: 'action.yml'
-          version_enabled: true
-          versioning_prefix: 'v'
-          versioning_branch: github.event.repository.master_branch
+          versioning_enabled: true
+          version_prefix: 'v'
+          versioning_default_branch: github.event.repository.master_branch
           pretty: true
