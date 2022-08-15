@@ -137,6 +137,11 @@ const map_comment = (
   }
 }
 
+enum GithubPullRequestReviewThreadCommentState {
+  SUBMITTED = 'submitted',
+  PENDING = 'pending',
+}
+
 interface GithubLogin {
   readonly login: string
 }
@@ -144,7 +149,7 @@ interface GithubLogin {
 interface GithubPullRequestReviewThreadComment {
   readonly author?: GithubLogin
   readonly bodyText: string
-  readonly state: 'submitted' | 'pending'
+  readonly state: GithubPullRequestReviewThreadCommentState
   readonly path: string
   readonly id: string
   readonly url: string
@@ -196,7 +201,7 @@ interface ListPullRequestReviewThreadsResponse {
 
 interface EmissaryComment {
   readonly message: string
-  readonly state: 'submitted' | 'pending'
+  readonly state: GithubPullRequestReviewThreadCommentState
   readonly path: string
   readonly interlocutor?: string
   readonly url: string
