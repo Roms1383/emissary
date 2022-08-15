@@ -137,15 +137,27 @@ const map_comment = (
   }
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/enums#pullrequestreviewcommentstate}
+ */
 enum PullRequestReviewCommentState {
   SUBMITTED = 'submitted',
   PENDING = 'pending',
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/interfaces#actor}
+ */
 interface Actor {
   readonly login: string
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#pullrequestreviewcomment}
+ */
 interface PullRequestReviewComment {
   readonly author?: Actor
   readonly bodyText: string
@@ -155,22 +167,38 @@ interface PullRequestReviewComment {
   readonly url: string
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#pullrequestreviewcommentconnection}
+ */
 interface PullRequestReviewCommentConnection {
   readonly pageInfo: ForwardPagination
   readonly totalCount: number
   readonly nodes: PullRequestReviewComment[]
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#pageinfo}
+ */
 interface BackwardPagination {
   readonly startCursor: string
   readonly hasPreviousPage: boolean
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#pageinfo}
+ */
 interface ForwardPagination {
   readonly endCursor: string
   readonly hasNextPage: boolean
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#pullrequestreviewthread}
+ */
 interface PullRequestReviewThread {
   readonly id: string
   readonly isResolved: boolean
@@ -180,21 +208,36 @@ interface PullRequestReviewThread {
   readonly comments: PullRequestReviewCommentConnection
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#pullrequestreviewthreadconnection}
+ */
 interface PullRequestReviewThreadConnection {
   readonly pageInfo: BackwardPagination
   readonly totalCount: number
   readonly nodes: PullRequestReviewThread[]
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#pullrequest}
+ */
 interface PullRequest {
   readonly reviewThreads: PullRequestReviewThreadConnection
   readonly id: string
 }
 
+/**
+ * Github GraphQL API
+ * see {@link https://docs.github.com/en/graphql/reference/objects#repository}
+ */
 interface Repository {
   readonly pullRequest: PullRequest
 }
 
+/**
+ * see {@link LIST_THREADS}
+ */
 interface PullRequestThreadResponse {
   readonly repository: Repository
 }
