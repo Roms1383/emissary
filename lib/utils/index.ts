@@ -81,11 +81,19 @@ const matches = (ref: string): EmissaryMatch | false => {
   return false
 }
 
+/**
+ * Github Event API
+ * see {@link https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#event-object-common-properties}
+ */
 interface Repository {
   readonly disabled: boolean
   readonly master_branch: string
 }
 
+/**
+ * Github Event API
+ * see {@link https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#pushevent}
+ */
 interface PushEvent {
   readonly created: boolean
   readonly deleted: boolean
@@ -95,10 +103,18 @@ interface PushEvent {
   readonly commits: Commit[]
 }
 
+/**
+ * Github Event API
+ * see {@link https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#pushevent}
+ */
 interface Author {
   readonly name: string
 }
 
+/**
+ * Github Event API
+ * see {@link https://docs.github.com/en/developers/webhooks-and-events/events/github-event-types#pushevent}
+ */
 interface Commit {
   readonly id: string
   readonly message: string
