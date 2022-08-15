@@ -2,6 +2,7 @@
 
 ![CI](https://github.com/Roms1383/emissary/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/Roms1383/emissary/branch/main/graph/badge.svg?token=7O91F6JAHS)](https://codecov.io/gh/Roms1383/emissary)
+[![license: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This Github Action allows your contributors to resolve requested changes from a pull request review thread directly from their commit message.
 
