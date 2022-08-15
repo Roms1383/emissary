@@ -10,20 +10,20 @@ const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 type Commits =
   Endpoints['GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls']['response']
 
-interface GithubOwner {
+interface SimpleUser {
   readonly login: string
 }
 
-interface GithubAssociatedRepository {
-  readonly owner?: GithubOwner
+interface Repository {
+  readonly owner?: SimpleUser
 }
 
-interface GithubBase {
-  readonly repo?: GithubAssociatedRepository
+interface Base {
+  readonly repo?: Repository
 }
 
-interface GithubAssociatedCommit {
-  readonly base?: GithubBase
+interface PullRequestSimple {
+  readonly base?: Base
   readonly number: string
 }
 
@@ -70,8 +70,8 @@ export {
   reply,
   Commits,
   Replies,
-  GithubAssociatedCommit,
-  GithubBase,
-  GithubOwner,
-  GithubAssociatedRepository,
+  PullRequestSimple,
+  Base,
+  SimpleUser,
+  Repository,
 }
