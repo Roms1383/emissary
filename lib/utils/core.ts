@@ -7,21 +7,41 @@ const octokit = new Octokit({
 })
 const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
+/**
+ * Github GraphQL REST API
+ * see {@link https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit}
+ */
 type Commits =
   Endpoints['GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls']['response']
 
+/**
+ * Github GraphQL REST API
+ * see {@link https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit}
+ */
 interface SimpleUser {
   readonly login: string
 }
 
+/**
+ * Github GraphQL REST API
+ * see {@link https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit}
+ */
 interface Repository {
   readonly owner?: SimpleUser
 }
 
+/**
+ * Github GraphQL REST API
+ * see {@link https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit}
+ */
 interface Base {
   readonly repo?: Repository
 }
 
+/**
+ * Github GraphQL REST API
+ * see {@link https://docs.github.com/en/rest/commits/commits#list-pull-requests-associated-with-a-commit}
+ */
 interface PullRequestSimple {
   readonly base?: Base
   readonly number: string
@@ -39,6 +59,10 @@ const pr = async (commit_sha: string): Promise<Commits> =>
       return v
     })
 
+/**
+ * Github GraphQL REST API
+ * see {@link https://docs.github.com/en/rest/pulls/comments#create-a-reply-for-a-review-comment}
+ */
 type Replies =
   Endpoints['POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies']['response']
 
