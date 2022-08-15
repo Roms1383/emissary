@@ -4,7 +4,7 @@ import fs from 'fs/promises'
 import * as core from './core'
 import * as graphql from './graphql'
 
-const maybe_skip = (event: GithubEvent) => {
+const maybe_skip = (event: PushEvent) => {
   debug(`github.event:\n${JSON.stringify(event, null, 2)}\n\n`)
   const { created, deleted, forced, ref } = event
   const disabled = event.repository?.disabled
@@ -30,11 +30,11 @@ const maybe_skip = (event: GithubEvent) => {
   return true
 }
 
-const eventOrSkip = async (): Promise<GithubEvent | 'skip'> =>
+const eventOrSkip = async (): Promise<PushEvent | 'skip'> =>
   fs
     .readFile(`${process.env.GITHUB_EVENT_PATH}`, 'utf8')
     .then(JSON.parse)
-    .then((event: GithubEvent) => (maybe_skip(event) ? 'skip' : event))
+    .then((event: PushEvent) => (maybe_skip(event) ? 'skip' : event))
 
 const extract = (url: string) =>
   url.indexOf('#') !== -1
@@ -81,28 +81,28 @@ const matches = (ref: string): EmissaryMatch | false => {
   return false
 }
 
-interface GithubRepository {
+interface Repository {
   readonly disabled: boolean
   readonly master_branch: string
 }
 
-interface GithubEvent {
+interface PushEvent {
   readonly created: boolean
   readonly deleted: boolean
   readonly forced: boolean
   readonly ref: string
-  readonly repository?: GithubRepository
-  readonly commits: GithubCommit[]
+  readonly repository?: Repository
+  readonly commits: Commit[]
 }
 
-interface GithubAuthor {
+interface Author {
   readonly name: string
 }
 
-interface GithubCommit {
+interface Commit {
   readonly id: string
   readonly message: string
-  readonly author?: GithubAuthor
+  readonly author?: Author
   readonly distinct: boolean
 }
 
@@ -126,8 +126,5 @@ export {
   graphql,
   EmissaryMatch,
   EmissarySingleMatch,
-  GithubAuthor,
-  GithubCommit,
-  GithubEvent,
-  GithubRepository,
+  Commit,
 }

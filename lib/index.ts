@@ -1,6 +1,7 @@
 import { info, setFailed, warning } from '@actions/core'
 
 import * as utils from './utils'
+import { Commit } from './utils'
 import { EmissaryComment, PullRequestReviewCommentState } from './utils/graphql'
 
 require('dotenv').config()
@@ -8,7 +9,7 @@ const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
 const matching = (
   kept: EmissaryMatchingCommit[],
-  commit: utils.GithubCommit
+  commit: Commit
 ): EmissaryMatchingCommit[] => {
   const sha = commit.id
   const matches = utils.matches(commit.message)
