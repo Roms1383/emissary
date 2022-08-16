@@ -63,7 +63,7 @@ const pr = async (
       per_page: PR_PER_PAGE,
     })
     .then((v) => {
-      debug(`utils.core.pr:\n${JSON.stringify(v, null, 2)}\n\n`)
+      debug(`utils.core.pr (page ${page}):\n${JSON.stringify(v, null, 2)}\n\n`)
       return v
     })
     .then((v) => {
