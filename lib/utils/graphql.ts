@@ -19,7 +19,7 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!, $start: Stri
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
-      reviewThreads(last: ${THREADS_PER_PAGE}, startCursor: $start) {
+      reviewThreads(last: ${THREADS_PER_PAGE}, before: $start) {
         pageInfo { startCursor, hasPreviousPage },
         totalCount,
         nodes {
@@ -92,7 +92,7 @@ query pullRequestThreadComment($owner: String!, $repo: String!, $pr: Int!, $prev
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
-      reviewThreads(last: 1, startCursor: $previous) {
+      reviewThreads(last: 1, before: $previous) {
         pageInfo { startCursor, hasPreviousPage },
         totalCount,
         nodes {
