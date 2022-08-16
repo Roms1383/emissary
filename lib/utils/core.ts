@@ -47,15 +47,34 @@ interface PullRequestSimple {
   readonly number: string
 }
 
-const pr = async (commit_sha: string): Promise<Commits> =>
+const PR_PER_PAGE = 10
+
+const pr = async (
+  commit_sha: string,
+  page = 1,
+  accumulator?: Commits
+): Promise<Commits> =>
   await octokit
     .request('GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls', {
       owner,
       repo,
       commit_sha,
+      page,
+      per_page: PR_PER_PAGE,
     })
     .then((v) => {
       debug(`utils.core.pr:\n${JSON.stringify(v, null, 2)}\n\n`)
+      return v
+    })
+    .then((v) => {
+      if (!accumulator) {
+        accumulator = v
+      } else {
+        accumulator.data = [...accumulator.data, ...v.data]
+      }
+      if (v.data.length === PR_PER_PAGE) {
+        return pr(commit_sha, page++, accumulator)
+      }
       return v
     })
 
