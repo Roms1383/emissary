@@ -48,35 +48,44 @@ interface PullRequestSimple {
 }
 
 const PR_PER_PAGE = 10
+let prCache: Map<string, Commits | undefined> = new Map()
 
 const pr = async (
   commit_sha: string,
   page = 1,
   accumulator?: Commits
-): Promise<Commits> =>
-  await octokit
-    .request('GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls', {
-      owner,
-      repo,
+): Promise<Commits | undefined> => {
+  if (!prCache.has(commit_sha))
+    prCache.set(
       commit_sha,
-      page,
-      per_page: PR_PER_PAGE,
-    })
-    .then((v) => {
-      debug(`utils.core.pr (page ${page}):\n${JSON.stringify(v, null, 2)}\n\n`)
-      return v
-    })
-    .then((v) => {
-      if (!accumulator) {
-        accumulator = v
-      } else {
-        accumulator.data = [...accumulator.data, ...v.data]
-      }
-      if (v.data.length === PR_PER_PAGE) {
-        return pr(commit_sha, page++, accumulator)
-      }
-      return v
-    })
+      await octokit
+        .request('GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls', {
+          owner,
+          repo,
+          commit_sha,
+          page,
+          per_page: PR_PER_PAGE,
+        })
+        .then((v) => {
+          debug(
+            `utils.core.pr (page ${page}):\n${JSON.stringify(v, null, 2)}\n\n`
+          )
+          return v
+        })
+        .then((v) => {
+          if (!accumulator) {
+            accumulator = v
+          } else {
+            accumulator.data = [...accumulator.data, ...v.data]
+          }
+          if (v.data.length === PR_PER_PAGE) {
+            return pr(commit_sha, page++, accumulator)
+          }
+          return v
+        })
+    )
+  return prCache.get(commit_sha)
+}
 
 /**
  * Github GraphQL REST API
