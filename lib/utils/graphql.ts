@@ -92,7 +92,7 @@ query pullRequestThreadComment($owner: String!, $repo: String!, $pr: Int!, $prev
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
-      reviewThreads(first: 1, startCursor: $previous) {
+      reviewThreads(last: 1, startCursor: $previous) {
         pageInfo { startCursor, hasPreviousPage },
         totalCount,
         nodes {
