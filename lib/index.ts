@@ -1,28 +1,42 @@
-require('dotenv').config()
-const { info, warning, setFailed, debug } = require('@actions/core')
-const utils = require('./utils')
-const [_, repo] = process.env.GITHUB_REPOSITORY.split('/')
+import { info, setFailed, warning } from '@actions/core'
 
-const matching = (kept, commit) => {
+import * as utils from './utils'
+import { Act, Commit } from './utils'
+import { EmissaryComment, PullRequestReviewCommentState } from './utils/graphql'
+
+require('dotenv').config()
+const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
+
+const matching = (
+  kept: EmissaryMatchingCommit[],
+  commit: Commit
+): EmissaryMatchingCommit[] => {
   const sha = commit.id
   const matches = utils.matches(commit.message)
   const contributor = commit.author?.name
   if (matches && commit.distinct) kept.push({ sha, matches, contributor })
   return kept
 }
-const opened = (pr) => pr.state == 'open' && !pr.locked
-const unresolved = (thread) => !thread.resolved
-const same = (discussion) => (comment) =>
-  utils.extract(comment.url) == discussion &&
-  comment.state.toLowerCase() === 'submitted'
-const resolutions = ({ matches }) => matches.act === 'resolve'
 
-const search = async (owner, pr, discussion) => {
-  let found = false
+const opened = (pr: PullRequestState) => pr.state == 'open' && !pr.locked
+const unresolved = (thread: PullRequestReviewThreadState) => !thread.resolved
+const same =
+  (discussion: string) => (comment: PullRequestReviewThreadCommentState) =>
+    utils.extract(comment.url) == discussion &&
+    comment.state.toLowerCase() === PullRequestReviewCommentState.SUBMITTED
+const resolutions = ({ matches }: EmissaryMatchingCommit) =>
+  matches.act === 'resolve'
+
+const search = async (
+  owner: string,
+  pr: { number: number },
+  discussion: string
+): Promise<EmissaryComment | false> => {
+  let found: EmissaryComment | false = false
   let { threads } = await utils.graphql.pr(owner, pr.number)
   threads = threads.filter(unresolved)
-  for (thread of threads) {
-    found = thread.comments.find(same(discussion))
+  for (const thread of threads) {
+    found = thread.comments.find(same(discussion)) || false
     if (found) return found
   }
   return await search(owner, pr, discussion)
@@ -32,9 +46,10 @@ const handle = async ({
   sha,
   matches: { act, discussion, extra },
   contributor,
-}) => {
-  let found = false
-  let owner = undefined
+}: EmissarySingleMatchingCommit) => {
+  let found: false | object = false
+  let owner: string | undefined = undefined
+  let pr = undefined
 
   let { data: prs } = await utils.core.pr(sha)
   prs = prs.filter(opened)
@@ -49,16 +64,22 @@ const handle = async ({
     if (found) break outer
   }
   if (found) {
-    const action = act === 'reply' ? 'marked it as done' : 'resolved it'
+    const action = act === Act.REPLY ? 'marked it as done' : 'resolved it'
     let message = `@${contributor ?? 'unknown'} ${action} in ${sha}`
     if (extra) message = `${message}\n${extra}`
     if (process.env.DRYRUN || process.env.INPUT_DRYRUN === 'true') {
       warning(`[dry-run] would have sent ${message}`)
       return true
     }
-    await utils.core.reply(owner, repo, pr.number, discussion, message)
+    await utils.core.reply(
+      owner!,
+      repo,
+      pr!.number,
+      parseInt(discussion),
+      message
+    )
     if (act === 'resolve') {
-      await utils.graphql.resolve(thread.id)
+      await utils.graphql.resolve(discussion)
     }
     return true
   }
@@ -72,7 +93,7 @@ const action = async () => {
   const { commits } = event
   let success = []
   const kept = commits.reduce(matching, [])
-  for (commit of kept) {
+  for (const commit of kept) {
     for (const discussion of commit.matches.discussion) {
       if (
         await handle({ ...commit, matches: { ...commit.matches, discussion } })
@@ -91,6 +112,22 @@ const action = async () => {
     } replied to and ${resolved} directly resolved`
   )
   info('finished')
+}
+
+type PullRequestState = { state: string; locked: boolean }
+type PullRequestReviewThreadState = { resolved: boolean }
+type PullRequestReviewThreadCommentState = { url: string; state: string }
+
+interface EmissaryMatchingCommit {
+  readonly matches: utils.EmissaryMatch
+  readonly contributor?: string
+  readonly sha: string
+}
+
+interface EmissarySingleMatchingCommit {
+  readonly matches: utils.EmissarySingleMatch
+  readonly contributor?: string
+  readonly sha: string
 }
 
 action().catch(setFailed)

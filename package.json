@@ -8,7 +8,7 @@
     "test": "GITHUB_TOKEN='00000' GITHUB_REPOSITORY='Roms1383/emissary' jest --coverage",
     "start": "node dist/index.js",
     "prestart": "npm run prepare",
-    "prepare": "ncc build lib/index.js -o dist --minify"
+    "prepare": "ncc build lib/index.ts -o dist --minify"
   },
   "repository": {
     "type": "git",
@@ -28,8 +28,12 @@
     "dotenv": "^16.0.1"
   },
   "devDependencies": {
+    "@octokit/types": "^6.41.0",
+    "@types/jest": "^28.1.6",
     "@vercel/ncc": "^0.34.0",
     "jest": "^28.1.3",
-    "prettier": "2.7.1"
+    "prettier": "2.7.1",
+    "ts-jest": "^28.0.7",
+    "typescript": "^4.7.4"
   }
 }
