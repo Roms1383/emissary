@@ -1,11 +1,46 @@
 require('dotenv').config()
 const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
-import { debug, info, setFailed, warning } from '@actions/core'
+import { info, setFailed, warning } from '@actions/core'
 
 import * as utils from './utils'
 import { Act, Commit } from './utils'
-import { EmissaryComment, PullRequestReviewCommentState } from './utils/graphql'
+import {
+  EmissaryComment,
+  EmissaryPullRequest,
+  PullRequestReviewCommentState,
+} from './utils/graphql'
+
+let threadsMap: Map<string, EmissaryPullRequest> = new Map()
+const list_threads = async (
+  owner: string,
+  pr: { number: number }
+): Promise<EmissaryPullRequest> => {
+  if (!threadsMap.has(`${owner}/#${pr.number}`)) {
+    threadsMap.set(
+      `${owner}/#${pr.number}`,
+      await utils.graphql.threads(owner, pr.number)
+    )
+  }
+  return threadsMap.get(`${owner}/#${pr.number}`)!
+}
+const list_comments = async (
+  owner: string,
+  pr: { number: number },
+  cursor?: string
+) => {
+  let threads = await list_threads(owner, pr)
+  if (!cursor) {
+    let first = threads.threads[0]!
+    let comments = await utils.graphql.comments(owner, pr.number)
+    first.comments = comments.threads[0].comments
+  } else {
+    let element = threads.threads.find((v) => v.cursor === cursor)!
+    let comments = await utils.graphql.comments(owner, pr.number, cursor)
+    element.comments = comments.threads[0].comments
+  }
+  return threads
+}
 
 const matching = (
   kept: EmissaryMatchingCommit[],
@@ -33,7 +68,7 @@ const search = async (
   discussion: string
 ): Promise<EmissaryComment | false> => {
   let found: EmissaryComment | false = false
-  let { threads } = await utils.graphql.threads(owner, pr.number)
+  let { threads } = await list_threads(owner, pr)
   threads = threads.filter(unresolved)
   for (const thread of threads) {
     found = thread.comments.find(same(discussion)) || false
@@ -43,7 +78,7 @@ const search = async (
   for (const thread of threads) {
     let {
       threads: [first],
-    } = await utils.graphql.comments(owner, pr.number, previous?.cursor)
+    } = await list_comments(owner, pr, previous?.cursor)
     found = first.comments.find(same(discussion)) || false
     if (found) return found
     previous = thread

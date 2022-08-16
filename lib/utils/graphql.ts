@@ -362,17 +362,17 @@ interface EmissaryReviewThread {
   readonly canReply: boolean
   readonly canResolve: boolean
   readonly path: string
-  readonly cursor: string
-  readonly next: boolean
+  cursor: string
+  next: boolean
   readonly total: number
-  readonly comments: EmissaryComment[]
+  comments: EmissaryComment[]
 }
 
 interface EmissaryPullRequest {
-  readonly cursor: string
-  readonly previous: boolean
+  cursor: string
+  previous: boolean
   readonly total: number
-  readonly threads: EmissaryReviewThread[]
+  threads: EmissaryReviewThread[]
   readonly id: string
 }
 
