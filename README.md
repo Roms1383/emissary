@@ -40,7 +40,7 @@ jobs:
       - name: install dependencies
         run: npm ci
 
-      - uses: Roms1383/emissary@v0.8
+      - uses: Roms1383/emissary@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }} # required to act in Github on your behalf
 ```
