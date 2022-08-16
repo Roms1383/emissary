@@ -84,7 +84,7 @@ jobs:
 
    ![screenshot comment](./images/comment.png)
 
-This Github Action supports a couple of different spelling, that you can check [from the unit-tests](tests/utils.test.js).
+This Github Action supports a couple of different spelling, that you can check [from the unit-tests](tests/utils.test.ts).
 
 ## how ?
 
