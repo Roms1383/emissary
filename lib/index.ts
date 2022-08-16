@@ -1,11 +1,11 @@
-import { info, setFailed, warning } from '@actions/core'
+require('dotenv').config()
+const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
+
+import { debug, info, setFailed, warning } from '@actions/core'
 
 import * as utils from './utils'
 import { Act, Commit } from './utils'
 import { EmissaryComment, PullRequestReviewCommentState } from './utils/graphql'
-
-require('dotenv').config()
-const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
 const matching = (
   kept: EmissaryMatchingCommit[],
