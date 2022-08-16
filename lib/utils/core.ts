@@ -50,7 +50,7 @@ interface PullRequestSimple {
 const PR_PER_PAGE = 10
 let prCache: Map<string, Commits | undefined> = new Map()
 
-const pr = async (
+const associatedPR = async (
   commit_sha: string,
   page = 1,
   accumulator?: Commits
@@ -79,7 +79,7 @@ const pr = async (
             accumulator.data = [...accumulator.data, ...v.data]
           }
           if (v.data.length === PR_PER_PAGE) {
-            return pr(commit_sha, page++, accumulator)
+            return associatedPR(commit_sha, page++, accumulator)
           }
           return v
         })
@@ -118,7 +118,7 @@ const reply = async (
     })
 
 export {
-  pr,
+  associatedPR,
   reply,
   Commits,
   Replies,

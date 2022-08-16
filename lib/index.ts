@@ -95,7 +95,7 @@ const handle = async ({
   let owner: string | undefined = undefined
   let pr = undefined
 
-  let { data: prs } = (await utils.core.pr(sha)) || { data: [] }
+  let { data: prs } = (await utils.core.associatedPR(sha)) || { data: [] }
   prs = prs.filter(opened)
   outer: for (pr of prs) {
     owner = pr.base?.repo?.owner?.login
