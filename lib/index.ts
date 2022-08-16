@@ -39,6 +39,15 @@ const search = async (
     found = thread.comments.find(same(discussion)) || false
     if (found) return found
   }
+  let previous = undefined
+  for (const thread of threads) {
+    let {
+      threads: [first],
+    } = await utils.graphql.comments(owner, pr.number, previous?.cursor)
+    found = first.comments.find(same(discussion)) || false
+    if (found) return found
+    previous = thread
+  }
   return await search(owner, pr, discussion)
 }
 
