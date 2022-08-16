@@ -33,7 +33,7 @@ const search = async (
   discussion: string
 ): Promise<EmissaryComment | false> => {
   let found: EmissaryComment | false = false
-  let { threads } = await utils.graphql.pr(owner, pr.number)
+  let { threads } = await utils.graphql.threads(owner, pr.number)
   threads = threads.filter(unresolved)
   for (const thread of threads) {
     found = thread.comments.find(same(discussion)) || false

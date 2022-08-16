@@ -10,13 +10,15 @@ const octokit = graphql.defaults({
 })
 const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
+const THREADS_PER_PAGE = 50
+
 const LIST_THREADS = {
   query: `
-query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
+query pullRequestThread($owner: String!, $repo: String!, $pr: Int!, $start: String) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
-      reviewThreads(last: 50) {
+      reviewThreads(last: ${THREADS_PER_PAGE}, startCursor: $start) {
         pageInfo { startCursor, hasPreviousPage },
         totalCount,
         nodes {
@@ -25,7 +27,7 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
           viewerCanReply,
           viewerCanResolve,
           path,
-          comments(first: 50) {
+          comments(first: 1) {
             pageInfo { endCursor, hasNextPage },
             totalCount,
             nodes { author { login }, bodyText, state, path, id, url }
@@ -39,16 +41,39 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
   variables: { repo },
 }
 
-const pr = async (owner: string, pr: number): Promise<EmissaryPullRequest> => {
+const threads = async (
+  owner: string,
+  pr: number,
+  start?: string,
+  accumulator?: EmissaryPullRequest
+): Promise<EmissaryPullRequest> => {
   const parameters = {
     ...LIST_THREADS.variables,
     pr,
     owner,
+    start,
   }
   return octokit(LIST_THREADS.query, parameters)
     .then(map_pr)
     .then((v: EmissaryPullRequest) => {
       debug(`utils.graphql.pr:\n${JSON.stringify(v, null, 2)}\n\n`)
+      return v
+    })
+    .then((v) => {
+      if (!accumulator) {
+        accumulator = v
+      } else {
+        accumulator = {
+          cursor: v.cursor,
+          previous: v.previous,
+          threads: [...accumulator.threads, ...v.threads],
+          total: v.total,
+          id: v.id,
+        } as EmissaryPullRequest
+      }
+      if (v.previous) {
+        return threads(owner, pr, v.cursor, accumulator)
+      }
       return v
     })
 }
@@ -268,7 +293,7 @@ interface EmissaryPullRequest {
 }
 
 export {
-  pr,
+  threads,
   resolve,
   EmissaryPullRequest,
   EmissaryReviewThread,
