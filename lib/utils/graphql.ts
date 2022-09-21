@@ -10,13 +10,16 @@ const octokit = graphql.defaults({
 })
 const [_, repo] = process.env.GITHUB_REPOSITORY!.split('/')
 
+const THREADS_PER_PAGE = 50
+const COMMENTS_PER_PAGE = 50
+
 const LIST_THREADS = {
   query: `
-query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
+query pullRequestThread($owner: String!, $repo: String!, $pr: Int!, $start: String) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
       id,
-      reviewThreads(last: 50) {
+      reviewThreads(last: ${THREADS_PER_PAGE}, before: $start) {
         pageInfo { startCursor, hasPreviousPage },
         totalCount,
         nodes {
@@ -25,7 +28,7 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
           viewerCanReply,
           viewerCanResolve,
           path,
-          comments(first: 50) {
+          comments(first: 1) {
             pageInfo { endCursor, hasNextPage },
             totalCount,
             nodes { author { login }, bodyText, state, path, id, url }
@@ -39,16 +42,122 @@ query pullRequestThread($owner: String!, $repo: String!, $pr: Int!) {
   variables: { repo },
 }
 
-const pr = async (owner: string, pr: number): Promise<EmissaryPullRequest> => {
+const threads = async (
+  owner: string,
+  pr: number,
+  start?: string,
+  accumulator?: EmissaryPullRequest,
+  page: number = 1
+): Promise<EmissaryPullRequest> => {
   const parameters = {
     ...LIST_THREADS.variables,
     pr,
     owner,
+    start,
   }
   return octokit(LIST_THREADS.query, parameters)
     .then(map_pr)
     .then((v: EmissaryPullRequest) => {
-      debug(`utils.graphql.pr:\n${JSON.stringify(v, null, 2)}\n\n`)
+      debug(
+        `utils.graphql.threads (page ${page}):\n${JSON.stringify(
+          v,
+          null,
+          2
+        )}\n\n`
+      )
+      return v
+    })
+    .then((v) => {
+      if (!accumulator) {
+        accumulator = v
+      } else {
+        accumulator = {
+          cursor: v.cursor,
+          previous: v.previous,
+          threads: [...accumulator.threads, ...v.threads],
+          total: v.total,
+          id: v.id,
+        } as EmissaryPullRequest
+      }
+      if (v.previous) {
+        return threads(owner, pr, v.cursor, accumulator, page++)
+      }
+      return v
+    })
+}
+
+const LIST_COMMENTS = {
+  query: `
+query pullRequestThreadComment($owner: String!, $repo: String!, $pr: Int!, $previous: String, $end: String) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr) {
+      id,
+      reviewThreads(last: 1, before: $previous) {
+        pageInfo { startCursor, hasPreviousPage },
+        totalCount,
+        nodes {
+          id,
+          isResolved,
+          viewerCanReply,
+          viewerCanResolve,
+          path,
+          comments(first: ${COMMENTS_PER_PAGE}, endCursor: $end) {
+            pageInfo { endCursor, hasNextPage },
+            totalCount,
+            nodes { author { login }, bodyText, state, path, id, url }
+          }
+        },
+      }
+    }
+  }
+}
+`,
+  variables: { repo },
+}
+
+const comments = async (
+  owner: string,
+  pr: number,
+  previous?: string,
+  end?: string,
+  accumulator?: EmissaryPullRequest,
+  page: number = 1
+): Promise<EmissaryPullRequest> => {
+  const parameters = {
+    ...LIST_COMMENTS.variables,
+    pr,
+    owner,
+    previous,
+    end,
+  }
+  return octokit(LIST_COMMENTS.query, parameters)
+    .then(map_pr)
+    .then((v: EmissaryPullRequest) => {
+      debug(
+        `utils.graphql.comments (page ${page}):\n${JSON.stringify(
+          v,
+          null,
+          2
+        )}\n\n`
+      )
+      return v
+    })
+    .then((v) => {
+      const thread = v.threads[0]
+      if (!accumulator) {
+        accumulator = v
+      } else {
+        accumulator = {
+          cursor: v.cursor,
+          previous: v.previous,
+          threads: [{ ...accumulator.threads[0], ...thread }],
+          total: v.total,
+          id: v.id,
+        } as EmissaryPullRequest
+      }
+      if (thread.next) {
+        return comments(owner, pr, previous, thread.cursor, accumulator, page++)
+      }
       return v
     })
 }
@@ -253,22 +362,23 @@ interface EmissaryReviewThread {
   readonly canReply: boolean
   readonly canResolve: boolean
   readonly path: string
-  readonly cursor: string
-  readonly next: boolean
+  cursor: string
+  next: boolean
   readonly total: number
-  readonly comments: EmissaryComment[]
+  comments: EmissaryComment[]
 }
 
 interface EmissaryPullRequest {
-  readonly cursor: string
-  readonly previous: boolean
+  cursor: string
+  previous: boolean
   readonly total: number
-  readonly threads: EmissaryReviewThread[]
+  threads: EmissaryReviewThread[]
   readonly id: string
 }
 
 export {
-  pr,
+  threads,
+  comments,
   resolve,
   EmissaryPullRequest,
   EmissaryReviewThread,
