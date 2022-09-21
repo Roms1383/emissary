@@ -1,5 +1,5 @@
 name: 'emissary-action'
-description: 'Comment on Pull Request Review Requesting Changes from Commit'
+description: 'This Github Action allows your contributors to resolve requested changes from a pull request review thread directly from their commit message.'
 branding:
   icon: check-square
   color: green

@@ -4,7 +4,11 @@
 [![codecov](https://codecov.io/gh/Roms1383/emissary/branch/main/graph/badge.svg?token=7O91F6JAHS)](https://codecov.io/gh/Roms1383/emissary)
 [![license: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+<!-- start description -->
+
 This Github Action allows your contributors to resolve requested changes from a pull request review thread directly from their commit message.
+
+<!-- end description -->
 
 ## why ?
 
@@ -17,7 +21,18 @@ Also to simplify a maintainer review process, a contributor might want to dutifu
 ![typical changes request screenshot](images/request-changes.png)
 ![automated comment screenshot](images/comment.png)
 
-## setup
+## inputs
+
+<!-- start inputs -->
+
+| **Input**    | **Description**                                                             | **Default** | **Required** |
+| ------------ | --------------------------------------------------------------------------- | ----------- | ------------ |
+| **`token`**  | Github Token                                                                |             | **true**     |
+| **`dryrun`** | Execute action without replying or resolving any pull request review thread | `false`     | **false**    |
+
+<!-- end inputs -->
+
+## install
 
 You want this action to run on pull requests, so something like:
 
@@ -45,7 +60,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }} # required to act in Github on your behalf
 ```
 
-## usage
+## flow
 
 1. setup the Github Action in your workflow [as shown in previous section](#setup).
 1. comment your commits like so, e.g.:
