@@ -25,7 +25,7 @@
     "@octokit/core": "^4.2.4",
     "@octokit/graphql": "^6.0.0",
     "@octokit/rest": "^19.0.4",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@octokit/types": "^9.0.0",
